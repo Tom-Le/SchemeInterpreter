@@ -1,3 +1,7 @@
+/**
+ * Scheme expression parser.
+ */
+
 #ifndef __SCHEMER_PARSER_H__
 #define __SCHEMER_PARSER_H__
 

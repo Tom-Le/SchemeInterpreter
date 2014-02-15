@@ -31,4 +31,4 @@ $(OBJECTWC): $(SOURCESWC)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf $(EXEC) $(OBJECTS)
+	rm -rf $(EXEC) $(OBJECTDIR)
