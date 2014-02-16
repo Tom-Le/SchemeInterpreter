@@ -1,68 +1,53 @@
 #include "parser.h"
 
 /**** Constants and variables ****/
-// Length of longest token.
-#define SCHEME_MAX_TOKEN_LENGTH 20
 
-// Token types.
-typedef enum _scheme_token_type {
-    SCHEME_TOKEN_TYPE_OPEN_PARENTHESIS,
-    SCHEME_TOKEN_TYPE_CLOSE_PARENTHESIS,
-    SCHEME_TOKEN_TYPE_EMPTY_LIST,
-    SCHEME_TOKEN_TYPE_TRUE,
-    SCHEME_TOKEN_TYPE_FALSE,
-    SCHEME_TOKEN_TYPE_SYMBOL
-} _scheme_token_type;
+// Length of longest token.
+#define SCHEME_TOKEN_MAX_LENGTH 1024
 
 /**** Private function declarations ****/
 
 /**
- * Parse a Scheme expression from standard input.
+ * Parse a Scheme expression from a Scheme file..
  *
- * @param  token  A token.
- * @param  type   Token's type.
+ * @param  file   A Scheme file.
+ * @param  token  Initial token from file.
+ * @param  type   Initial token's type.
  * @param  depth  Expression's depth.
- */
-void _scheme_expression(char *token, _scheme_token_type type, int depth);
-
-/**
- * Get the next token.
  *
- * @param  token  char buffer for storing token's text.
- *
- * @return Token type.
+ * @return 1 if expression was parsed, 0 otherwise.
  */
-_scheme_token_type _scheme_get_next_token(char **token);
+static int _scheme_expression(scheme_file *file, char *token, scheme_token_type type, int depth);
 
 /**** Private function implementations ****/
 
-void _scheme_expression(char *token, _scheme_token_type type, int depth)
+static int _scheme_expression(scheme_file *file, char *token, scheme_token_type type, int depth)
 {
     switch (type)
     {
-        case SCHEME_TOKEN_TYPE_OPEN_PARENTHESIS:
+        case SCHEME_TOKEN_TYPE_LEFT_PARENTHESIS:
             for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
             printf("S_Expression\n");
             for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
             printf("(\n");
 
-            _scheme_token_type nextTokenType;
-            char *nextToken = malloc(sizeof(char) * SCHEME_MAX_TOKEN_LENGTH);
-            do
+            while (1)
             {
-                nextTokenType = _scheme_get_next_token(&nextToken);
-                _scheme_expression(nextToken, nextTokenType, depth + 1);
-            }
-            while (nextTokenType != SCHEME_TOKEN_TYPE_CLOSE_PARENTHESIS);
+                scheme_token_type nextTokenType;
+                char *nextToken = scheme_get_token(file, &nextTokenType);
+                _scheme_expression(file, nextToken, nextTokenType, depth + 1);
+                if (nextToken != NULL) free(nextToken);
 
-            free(nextToken);
+                if (nextTokenType == SCHEME_TOKEN_TYPE_RIGHT_PARENTHESIS)
+                    break;
+            }
 
             for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
             printf(")\n");
 
             break;
 
-        case SCHEME_TOKEN_TYPE_CLOSE_PARENTHESIS:
+        case SCHEME_TOKEN_TYPE_RIGHT_PARENTHESIS:
             break;
 
         case SCHEME_TOKEN_TYPE_EMPTY_LIST:
@@ -91,43 +76,45 @@ void _scheme_expression(char *token, _scheme_token_type type, int depth)
 
         case SCHEME_TOKEN_TYPE_SYMBOL:
             for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
-            printf("S_Expression\n");
+            printf("S_Expression (symbol)\n");
             for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
             printf("  %s\n", token);
 
             break;
+
+        case SCHEME_TOKEN_TYPE_NUMBER:
+            for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
+            printf("S_Expression (number)\n");
+            for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
+            printf("  %s\n", token);
+
+            break;
+
+        case SCHEME_TOKEN_TYPE_SINGLE_QUOTE:
+            for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
+            printf("S_Expression\n");
+            for (int i = 0; i < depth; ++i, putchar(' '), putchar(' '));
+            printf("  '\n");
+            break;
+
+        case SCHEME_TOKEN_TYPE_NULL:
+            return 0;
+            break;
     }
-}
 
-_scheme_token_type _scheme_get_next_token(char **token)
-{
-    // Copy token.
-    strcpy(*token, getToken());
-
-    // Determine type.
-    if (strcmp(*token, "(") == 0)
-        return SCHEME_TOKEN_TYPE_OPEN_PARENTHESIS;
-    else if (strcmp(*token, ")") == 0)
-        return SCHEME_TOKEN_TYPE_CLOSE_PARENTHESIS;
-    else if (strcmp(*token, "()") == 0)
-        return SCHEME_TOKEN_TYPE_EMPTY_LIST;
-    else if (strcmp(*token, "#t") == 0)
-        return SCHEME_TOKEN_TYPE_TRUE;
-    else if (strcmp(*token, "#f") == 0)
-        return SCHEME_TOKEN_TYPE_FALSE;
-    else
-        return SCHEME_TOKEN_TYPE_SYMBOL;
+    return 1;
 }
 
 /**** Public functions ****/
 
-void scheme_expression(void)
+int scheme_expression(scheme_file *file)
 {
-    // Get first token and treat as an expression.
-    startTokens(SCHEME_MAX_TOKEN_LENGTH);
+    scheme_token_type type;
+    char *token = scheme_get_token(file, &type);
 
-    char *token = malloc(sizeof(char) * SCHEME_MAX_TOKEN_LENGTH);
-    _scheme_token_type type = _scheme_get_next_token(&token);
-    _scheme_expression(token, type, 0);
-    free(token);
+    int result = _scheme_expression(file, token, type, 0);
+
+    if (token != NULL) free(token);
+
+    return result;
 }

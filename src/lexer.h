@@ -1,74 +1,74 @@
-/****************************************************************
- File: lexer.h
- ----------------
- This is the interface for a lexical analyzer for part of Scheme.
- It has an operation for initializing the stream of tokens and
- for getting the next token.
- ****************************************************************/
-#ifndef LEXER
-#define LEXER
+/**
+ * Scheme lexical analyzer.
+ */
+
+#ifndef __SCHEME_LEXICAL_ANALYZER_H__
+#define __SCHEME_LEXICAL_ANALYZER_H__
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
-/****************************************************************
- Function: startTokens(int maxLength)
- ------------------------------------
- Initialize a token stream of tokens each of length <= maxLength.
+// Scheme file.
+typedef struct scheme_file scheme_file;
 
- Call this function before scanning for tokens. Simply call,
+// Token types.
+typedef enum scheme_token_type {
+    // Left parenthesis.
+    SCHEME_TOKEN_TYPE_LEFT_PARENTHESIS,
+    // Right parenthesis.
+    SCHEME_TOKEN_TYPE_RIGHT_PARENTHESIS,
+    // Empty list.
+    SCHEME_TOKEN_TYPE_EMPTY_LIST,
+    // Single quote.
+    SCHEME_TOKEN_TYPE_SINGLE_QUOTE,
+    // True (#t)
+    SCHEME_TOKEN_TYPE_TRUE,
+    // False (#f)
+    SCHEME_TOKEN_TYPE_FALSE,
+    // Symbol (arbitrary text)
+    SCHEME_TOKEN_TYPE_SYMBOL,
+    // Number
+    SCHEME_TOKEN_TYPE_NUMBER,
+    // File cannot be read any further.
+    SCHEME_TOKEN_TYPE_NULL
+} scheme_token_type;
 
-    startTokens(20);
-
- The argument signifies the fact that tokens will have the
- given maximum length. Thus in the above statement tokens in
- the stream can be at most 20 characters long.
+/**
+ * Open a new Scheme file at specified path.
+ *
+ * @param  path  Path to file to be opened.
  */
-void startTokens (int maxLength);
+scheme_file *scheme_open_path(const char *path);
 
-/****************************************************************
- Function: getToken()
- --------------------
- This function returns the next token in the token stream. It
- ignores all white space, including newlines. It returns the
- tokens "(", ")", "#t", "#f", "'" (the single quote), and "()"
- (the empty list, which is returned as the string "()"). All
- other strings of symbols with no white space are regarded as
- symbols or literals, and are returned as strings. (For ease
- in scanning, there is one exception: the "#" sign is excluded
- except at the beginning of #t or #f.)
-
- To invoke this, one may, for example, declare a string variable
- named token:
-
-     char *token;
-
- Then getToken() can be invoked as,
-
-     token = getToken();
-
- This technique is fine as long as you are quite sure you
- will only want to store the value in token until the
- next call to getToken(), and no longer.
-
- IT IS SAFER to allocate token statically, as in,
-
-     char token[20];
-
- (assuming, for example, that tokens are <= 20 characters)
- and do a string copy of the return value from getToken():
-
-     strcpy(token, getToken());
-
- rather than the above assignment. In this syntax the string
- copy acts much more like a true assignment, and using
- getToken() you can store the next token in another variable
- in the same way without losing the information in token.
-
- WARNING: Tokens may be at most maxLength characters long (see
- startTokens()). This function is not guaranteed to work for longer
- tokens, although it may work in most cases.
+/**
+ * Open a new Scheme file from file pointer.
+ * Caller is responsible for closing file pointer himself.
+ *
+ * @param  fp  File pointer.
  */
-char * getToken ();
+scheme_file *scheme_open_file(FILE *fp);
+
+/**
+ * Close Scheme file.
+ * If file was previously opened with scheme_open_file(), the
+ * caller is responsible for closing the file pointer supplied to
+ * scheme_open_file().
+ *
+ * @param  file  File to be closed.
+ */
+void scheme_close(scheme_file *file);
+
+/**
+ * Get next available token.
+ * This token must be freed with free() afterwards.
+ *
+ * @param  file  A Scheme file.
+ * @param  type  If supplied, set to token's type.
+ *
+ * @return String containing token, or NULL if there is no more token.
+ */
+char *scheme_get_token(scheme_file *file, scheme_token_type *type);
 
 #endif

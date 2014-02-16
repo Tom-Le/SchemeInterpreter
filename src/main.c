@@ -9,11 +9,15 @@
 int main(int argc, char *argv[])
 {
     // Parse expressions from stdin until terminated.
-    while (1) {
+    scheme_file *f = scheme_open_file(stdin);
+    while (1)
+    {
         printf("scheme> ");
         fflush(stdout);
-        scheme_expression();
+        if (scheme_expression(f) == 0)
+            break;
     }
+    scheme_close(f);
 
     return 0;
 }
