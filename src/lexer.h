@@ -10,6 +10,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "strutil.h"
+
 // Scheme file.
 typedef struct scheme_file scheme_file;
 

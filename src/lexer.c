@@ -39,19 +39,6 @@ static int _buffer(scheme_file *file);
  */
 static char _next_character(scheme_file *file);
 
-/**
- * Allocate new char buffer with more space.
- * If the supplied new size is smaller than old string's size,
- * a new buffer with double the old size is initialized.
- *
- * @param  s        Old string.
- * @param  size     Old string's size.
- * @param  newSize  New string's size.
- *
- * @return New string.
- */
-char *_reallocate_char(char *s, int size, int newSize);
-
 /**** Private function implementations ****/
 
 static int _buffer(scheme_file *file)
@@ -93,17 +80,6 @@ static char _next_character(scheme_file *file)
             return EOF;
 
     return file->buffer[file->bufferPosition++];
-}
-
-char *_reallocate_char(char *s, int size, int newSize)
-{
-    newSize = (size < newSize) ? newSize : size * 2;
-    char *new = malloc(sizeof(char) * newSize);
-
-    for (int i = 0; i < size; ++i)
-        new[i] = s[i];
-
-    return new;
 }
 
 /**** Public function implementations ****/
@@ -265,7 +241,7 @@ char *scheme_get_token(scheme_file *file, scheme_token_type *type)
         {
             int tokenNewSize = tokenSize * 2;
 
-            char *tokenNew = _reallocate_char(token, tokenSize, tokenNewSize);
+            char *tokenNew = reallocate_char(token, tokenSize, tokenNewSize);
 
             free(token);
 
