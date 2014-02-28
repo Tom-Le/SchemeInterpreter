@@ -40,7 +40,7 @@ scheme_pair *scheme_pair_get_empty();
 /**
  * Check if pair is empty.
  */
-int *scheme_pair_is_empty(scheme_pair *pair);
+int scheme_pair_is_empty(scheme_pair *pair);
 
 /**
  * Get pair's first element.

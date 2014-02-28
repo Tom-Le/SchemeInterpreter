@@ -6,3 +6,4 @@
 #include "scheme-boolean.h"
 #include "scheme-symbol.h"
 #include "scheme-pair.h"
+#include "scheme-procedure.h"

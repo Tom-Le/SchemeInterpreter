@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "parser.h"
+#include "eval.h"
 
 /**
  * Start an interactive Scheme prompt.
@@ -23,10 +24,16 @@ int main(int argc, char *argv[])
         scheme_element *element = scheme_expression(f);
         if (element == NULL) break;
 
-        scheme_element_print(element);
+        scheme_element *result = scheme_evaluate(element);
+        if (result != NULL)
+            scheme_element_print(result);
+        else
+            scheme_element_print(element);
+
         printf("\n");
 
         scheme_element_free(element);
+        scheme_element_free(result);
     }
 
     // Terminate.

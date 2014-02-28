@@ -10,7 +10,6 @@
 #define __SCHEME_SYMBOL_H__
 
 #include "scheme-element.h"
-#include "strutil.h"
 
 // Scheme identifier symbol type.
 #define SCHEME_SYMBOL_TYPE "SCHEME_SYMBOL_TYPE"

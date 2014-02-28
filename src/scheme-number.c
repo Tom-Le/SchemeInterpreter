@@ -13,41 +13,62 @@ struct scheme_number {
 /**** Private function declarations ****/
 
 /**
+ * Initialize static variables.
+ */
+static void _static_init();
+
+/**
  * Return number symbol's type identifier.
  *
  * @param  element  Should be a Scheme number symbol.
  */
-static char *_scheme_number_get_type(scheme_element *element);
+static char *_vtable_get_type(scheme_element *element);
 
 /**
  * Free Scheme number.
  *
  * @param  element  Should be a Scheme number symbol.
  */
-static void _scheme_number_free(scheme_element *element);
+static void _vtable_free(scheme_element *element);
 
 /**
  * Print Scheme number symbol to stdout.
  */
-static void _scheme_number_print(scheme_element *element);
+static void _vtable_print(scheme_element *element);
+
+/**
+ * Copy number symbol.
+ */
+static scheme_element *_vtable_copy(scheme_element *element);
 
 /**** Private variables ****/
 
 // Global virtual function table.
-static struct scheme_element_vtable _scheme_number_vtable = {
-    _scheme_number_get_type,
-    _scheme_number_free,
-    _scheme_number_print
-};
+static struct scheme_element_vtable _scheme_number_vtable;
+
+static int _static_initialized = 0;
 
 /**** Private function implementations ****/
 
-static char *_scheme_number_get_type(scheme_element *element)
+static void _static_init()
+{
+    if (!_static_initialized)
+    {
+        _scheme_number_vtable.get_type = _vtable_get_type;
+        _scheme_number_vtable.free = _vtable_free;
+        _scheme_number_vtable.print = _vtable_print;
+        _scheme_number_vtable.copy = _vtable_copy;
+
+        _static_initialized = 1;
+    }
+}
+
+static char *_vtable_get_type(scheme_element *element)
 {
     return SCHEME_NUMBER_TYPE;
 }
 
-static void _scheme_number_free(scheme_element *element)
+static void _vtable_free(scheme_element *element)
 {
     if (!scheme_element_is_type(element, SCHEME_NUMBER_TYPE))
         return;
@@ -55,7 +76,7 @@ static void _scheme_number_free(scheme_element *element)
     free(element);
 }
 
-static void _scheme_number_print(scheme_element *element)
+static void _vtable_print(scheme_element *element)
 {
     if (!scheme_element_is_type(element, SCHEME_NUMBER_TYPE))
         return;
@@ -64,10 +85,21 @@ static void _scheme_number_print(scheme_element *element)
     printf("%d", symbol->value);
 }
 
+static scheme_element *_vtable_copy(scheme_element *element)
+{
+    if (!scheme_element_is_type(element, SCHEME_NUMBER_TYPE))
+        return NULL;
+
+    scheme_number *num = (scheme_number *)element;
+    return (scheme_element *)scheme_number_new(num->value);
+}
+
 /**** Public function implementations ****/
 
 scheme_number *scheme_number_new(int value)
 {
+    _static_init();
+
     // Allocate symbol.
     scheme_number *symbol;
     if ((symbol = malloc(sizeof(scheme_number))) == NULL)

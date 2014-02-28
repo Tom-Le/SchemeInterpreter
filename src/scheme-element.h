@@ -7,6 +7,8 @@
 // Scheme element.
 typedef struct scheme_element scheme_element;
 
+/**** Virtual functions ****/
+
 /**
  * Get Scheme element's type.
  *
@@ -15,6 +17,32 @@ typedef struct scheme_element scheme_element;
  * @return String identifying element's type.
  */
 char *scheme_element_get_type(scheme_element *element);
+
+/**
+ * Free Scheme element.
+ *
+ * @param  element  A Scheme element.
+ */
+void scheme_element_free(scheme_element *element);
+
+/**
+ * Print Scheme element to stdout.
+ *
+ * @param  element  A Scheme element.
+ */
+void scheme_element_print(scheme_element *element);
+
+/**
+ * Copy Scheme element.
+ * Copy must be freed with scheme_element_free().
+ *
+ * @param  element  A Scheme element.
+ *
+ * @result A copy or NULL if out of memory.
+ */
+scheme_element *scheme_element_copy(scheme_element *element);
+
+/**** Convenience functions ****/
 
 /**
  * Check if Scheme element is a given type.
@@ -26,18 +54,5 @@ char *scheme_element_get_type(scheme_element *element);
  *         0 otherwise.
  */
 int scheme_element_is_type(scheme_element *element, char *type);
-
-/**
- * Free Scheme element.
- *
- * @param  element  A Scheme element.
- */
-void scheme_element_free(scheme_element *element);
-
-/**
- * Print Scheme element to stdout.
- * Mainly used for debugging.
- */
-void scheme_element_print(scheme_element *element);
 
 #endif
