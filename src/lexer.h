@@ -41,14 +41,19 @@ typedef enum scheme_token_type {
  * Open a new Scheme file at specified path.
  *
  * @param  path  Path to file to be opened.
+ *
+ * @return Scheme file, or NULL if the path could not be opened,
+ *     or if out of memory.
  */
 scheme_file *scheme_open_path(const char *path);
 
 /**
  * Open a new Scheme file from file pointer.
- * Caller is responsible for closing file pointer himself.
+ * Caller is responsible for closing file pointer itself.
  *
  * @param  fp  File pointer.
+ *
+ * @return Scheme file, or NULL if out of memory.
  */
 scheme_file *scheme_open_file(FILE *fp);
 

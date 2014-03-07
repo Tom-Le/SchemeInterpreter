@@ -21,6 +21,8 @@ static void _static_init();
  * Return number symbol's type identifier.
  *
  * @param  element  Should be a Scheme number symbol.
+ *
+ * @return Type identifier.
  */
 static char *_vtable_get_type(scheme_element *element);
 
@@ -33,11 +35,17 @@ static void _vtable_free(scheme_element *element);
 
 /**
  * Print Scheme number symbol to stdout.
+ *
+ * @param  element  Should be a Scheme number symbol.
  */
 static void _vtable_print(scheme_element *element);
 
 /**
  * Copy number symbol.
+ *
+ * @param  element  Should be a Scheme number symbol.
+ *
+ * @return A copy, or NULL if out of memory.
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 

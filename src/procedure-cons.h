@@ -9,5 +9,7 @@
 
 /**
  * Get Scheme procedure "cons".
+ *
+ * @return Scheme procedure "cons".
  */
 scheme_procedure *scheme_procedure_cons();

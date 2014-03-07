@@ -1,5 +1,8 @@
 /**
- * Functions for initializing a Scheme procedure.
+ * Functions for creating and initializing a Scheme procedure.
+ *
+ * This header file should only be included by code declaring
+ * a built-in Scheme procedure.
  *
  * These functions are implemented in scheme-procedure.c.
  */
@@ -11,10 +14,10 @@
 #include "scheme-element-private.h"
 #include "scheme-procedure.h"
 
-// Function that can be stored in a Scheme procedure.
+// Typedef for function pointer that can be stored in a Scheme procedure.
 typedef scheme_element *(*scheme_procedure_function_t)(scheme_element *);
 
-// Scheme procedure.
+// Scheme procedure struct.
 struct scheme_procedure {
     struct scheme_element super;
     char *name;
@@ -22,15 +25,22 @@ struct scheme_procedure {
 };
 
 /**
- * Initialize a static scheme_procedure struct.
+ * Initialize an already-initialized scheme_procedure struct.
  *
  * Must be called when allocating a new scheme_procedure struct,
- * dynamically or statically.
+ * whether dynamically or statically.
  *
- * If scheme_procedure was dynamically allocated, it can be
- * freed with scheme_element_free().
+ * If a Scheme procedure has been dynamically allocated, it must
+ * be freed with scheme_element_free().
+ *
+ * The given function pointer has to conform to the function
+ * signature defined by the scheme_procedure_function_t typedef.
+ * It will be called whenever a procedure is applied on a
+ * Scheme expression.
  *
  * @param  proc  A Scheme procedure.
+ * @param  name  Its name.
+ * @param  function  A function pointer.
  */
 void scheme_procedure_init(scheme_procedure *proc, char *name, scheme_procedure_function_t function);
 

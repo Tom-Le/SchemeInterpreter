@@ -24,6 +24,8 @@ struct scheme_file {
  * If line is longer than buffer's size, it reads as many characters as the
  * buffer's size permits onto the buffer.
  *
+ * @param  file  A Scheme file.
+ *
  * @return 1 if new chars were read and stored on buffer,
  *         0 if no new chars were read and stored.
  */
@@ -33,6 +35,8 @@ static int _buffer(scheme_file *file);
  * Get next character in file through its buffer.
  * If buffer has been exhausted, it is populated with more characters
  * from file before the next character is returned.
+ *
+ * @param  file  A Scheme file.
  *
  * @return Next character, or EOF if either there ane no more character to
  *         read, or an I/O error occurred.

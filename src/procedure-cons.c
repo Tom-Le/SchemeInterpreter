@@ -15,7 +15,16 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "cons".
- * Return a Scheme pair with supplied first and second elements.
+ * Return a Scheme pair with first and second elements set to the given
+ * arguments.
+ *
+ * Will return NULL if:
+ *   - Supplied element is not a pair in the format: (<element> <element>)
+ *   - Out of memory.
+ *
+ * @param  element  A Scheme element.
+ *
+ * @return Constructed pair, or NULL if an error occurred.
  */
 static scheme_element *_cons_function(scheme_element *element);
 

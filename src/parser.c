@@ -81,6 +81,7 @@ static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme
 
     if (type == SCHEME_TOKEN_TYPE_NUMBER)
     {
+        // Convert token to a number.
         int value = (int)strtol(token, (char **)NULL, 10);
         return (scheme_element *)scheme_number_new(value);
     }

@@ -19,7 +19,11 @@ static void _init_builtin();
 
 /**
  * Search for a built-in Scheme procedure.
- * Return NULL if no built-in procedure exists with given name.
+ *
+ * @param  name  Procedure's name.
+ *
+ * @return Procedure, or NULL if no built-in procedure exists with
+ *     given name.
  */
 static scheme_procedure *_search_procedure(char *name);
 
@@ -46,7 +50,10 @@ static scheme_procedure *_search_procedure(char *name)
     {
         scheme_procedure *proc = _builtins[i];
         char *procName = scheme_procedure_get_name(proc);
-        if (strcmp(name, procName) == 0)
+        int nameCmp = strcmp(name, procName);
+        free(procName);
+
+        if (nameCmp == 0)
             return proc;
     }
 
@@ -71,7 +78,7 @@ scheme_element *scheme_evaluate(scheme_element *element)
 
         // Check if there is a procedure of given name.
         scheme_procedure *proc = _search_procedure(symbolValue);
-        free (symbolValue);
+        free(symbolValue);
         if (proc != NULL)
             return scheme_element_copy((scheme_element *)proc);
 

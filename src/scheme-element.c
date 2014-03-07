@@ -4,7 +4,7 @@
 #include "scheme-element-private.h"
 
 // For scheme_element struct and its virtual function table,
-// please check element-private.h.
+// please check scheme-element-private.h.
 
 /**** Public function implementations ****/
 

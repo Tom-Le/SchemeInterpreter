@@ -10,7 +10,10 @@ typedef struct scheme_element scheme_element;
 /**** Virtual functions ****/
 
 /**
- * Get Scheme element's type.
+ * Get Scheme element's type identifier string.
+ *
+ * A Scheme type's identifier string is usually defined in its
+ * corresponding header file.
  *
  * @param  element  A Scheme element.
  *
@@ -19,7 +22,11 @@ typedef struct scheme_element scheme_element;
 char *scheme_element_get_type(scheme_element *element);
 
 /**
- * Free Scheme element.
+ * Free previously allocated Scheme element.
+ *
+ * A Scheme element is usually initialized using a Scheme data type's
+ * specific initializer function. Notes on freeing such an element
+ * will be found in the function's documentation.
  *
  * @param  element  A Scheme element.
  */
@@ -34,7 +41,8 @@ void scheme_element_print(scheme_element *element);
 
 /**
  * Copy Scheme element.
- * Copy must be freed with scheme_element_free().
+ * Copy need to be freed with scheme_element_free() unless otherwise
+ * noted in a Scheme data type's header file.
  *
  * @param  element  A Scheme element.
  *
@@ -50,7 +58,7 @@ scheme_element *scheme_element_copy(scheme_element *element);
  * @param  element  A Scheme element.
  * @param  type     A type identifier.
  *
- * @return 1 if Scheme element's type matches given identifier.
+ * @return 1 if Scheme element's type matches given identifier,
  *         0 otherwise.
  */
 int scheme_element_is_type(scheme_element *element, char *type);

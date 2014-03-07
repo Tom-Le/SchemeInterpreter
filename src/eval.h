@@ -10,6 +10,7 @@
  *
  * @param  element  Element to be evaluated.
  *
- * @return Result of evaluation.
+ * @return Result of evaluation, or NULL if element could not
+ *     be evaluated.
  */
 scheme_element *scheme_evaluate(scheme_element *element);

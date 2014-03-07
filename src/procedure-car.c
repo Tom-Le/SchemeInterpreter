@@ -15,7 +15,15 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "car".
- * Return the first element of a Scheme pair.
+ * Return the first element of the Scheme pair supplied as argument.
+ *
+ * Will return NULL if:
+ *   - Supplied element is not a pair in the format: (<pair>)
+ *   - Out of memory.
+ *
+ * @param  element  A Scheme element.
+ *
+ * @return First element of pair, or NULL if an error occurred.
  */
 static scheme_element *_car_function(scheme_element *element);
 

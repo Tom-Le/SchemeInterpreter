@@ -9,5 +9,7 @@
 
 /**
  * Get Scheme procedure "quote".
+ *
+ * @return Scheme procedure "quote".
  */
 scheme_procedure *scheme_procedure_quote();

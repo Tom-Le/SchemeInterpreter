@@ -20,35 +20,44 @@ struct scheme_pair {
 static void _static_init();
 
 /**
- * Return pair's type identifier.
+ * Return pair's type identifier string.
+ *
+ * @param  element  Should be a Scheme pair.
+ *
+ * @return Type identifier.
  */
 static char *_vtable_get_type(scheme_element *element);
 
 /**
- * Free pair.
+ * Free pair. Will also free its first and second elements.
+ *
+ * @param  element  Should be a Scheme pair.
  */
 static void _vtable_free(scheme_element *element);
 
 /**
  * Copy pair.
+ *
+ * @param  element  Should be a Scheme pair.
+ *
+ * @return Copy or NULL if out of memory.
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 
 /**
  * Print pair to stdout.
+ *
+ * @param  element  Should be a Scheme pair.
  */
 static void _vtable_print(scheme_element *element);
 
 /**
- * Print pair to stdout without parentheses.
- * Useful for printing a Scheme list.
+ * Recursively print pair and its elements to stdout.
+ * Used in _vtable_print().
+ *
+ * @param  element  A Scheme pair.
  */
-static void _scheme_pair_print_condensed(scheme_pair *pair);
-
-/**
- * (Actually) pair to stdout.
- */
-static void _scheme_pair_do_print(scheme_pair *pair);
+static void _do_print(scheme_pair *pair);
 
 /**** Private variables ****/
 
@@ -132,19 +141,11 @@ static void _vtable_print(scheme_element *element)
     scheme_pair *pair = (scheme_pair *)element;
 
     putchar('(');
-    _scheme_pair_do_print(pair);
+    _do_print(pair);
     putchar(')');
 }
 
-static void _scheme_pair_print_condensed(scheme_pair *pair)
-{
-    // Special treatment for empty pair.
-    if (pair == &_empty_pair) return;
-
-    _scheme_pair_do_print(pair);
-}
-
-static void _scheme_pair_do_print(scheme_pair *pair)
+static void _do_print(scheme_pair *pair)
 {
     // Print first element.
     scheme_element_print(pair->first);
@@ -153,8 +154,11 @@ static void _scheme_pair_do_print(scheme_pair *pair)
     // Else, use dot syntax.
     if (scheme_element_is_type(pair->second, SCHEME_PAIR_TYPE))
     {
-        if ((scheme_pair *)pair->second != &_empty_pair) putchar(' ');
-        _scheme_pair_print_condensed((scheme_pair *)pair->second);
+        if ((scheme_pair *)pair->second != &_empty_pair)
+        {
+            putchar(' ');
+            _do_print((scheme_pair *)pair->second);
+        }
     }
     else
     {

@@ -15,7 +15,15 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "cdr".
- * Return the second element of a Scheme pair.
+ * Return the second element of the Scheme pair supplied as argument.
+ *
+ * Will return NULL if:
+ *   - Supplied element is not a pair in the format: (<pair>)
+ *   - Out of memory.
+ *
+ * @param  element  A Scheme element.
+ *
+ * @return Second element, or NULL if an error occurred.
  */
 static scheme_element *_cdr_function(scheme_element *element);
 

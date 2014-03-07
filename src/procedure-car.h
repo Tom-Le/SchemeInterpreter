@@ -9,5 +9,7 @@
 
 /**
  * Get Scheme procedure "car".
+ *
+ * @return Scheme procedure "car".
  */
 scheme_procedure *scheme_procedure_car();

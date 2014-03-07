@@ -9,5 +9,7 @@
 
 /**
  * Get Scheme procedure "cdr".
+ *
+ * @return Scheme procedure "cdr".
  */
 scheme_procedure *scheme_procedure_cdr();

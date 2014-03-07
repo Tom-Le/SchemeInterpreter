@@ -9,6 +9,8 @@
 
 /**
  * Get Scheme procedure "symbol?".
+ *
+ * @return Scheme procedure "symbol?".
  */
 scheme_procedure *scheme_procedure_symbol();
 

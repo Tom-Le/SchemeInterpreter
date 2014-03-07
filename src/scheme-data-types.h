@@ -1,5 +1,5 @@
 /**
- * Header file for all Scheme data types.
+ * Collection of all Scheme data types.
  */
 #include "scheme-element.h"
 #include "scheme-number.h"

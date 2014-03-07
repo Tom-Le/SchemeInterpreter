@@ -15,21 +15,34 @@ static void _static_init();
 
 /**
  * Return procedure's type identifier.
+ *
+ * @param  element  Should be a Scheme procedure.
+ *
+ * @return Type identifier.
  */
 static char *_vtable_get_type(scheme_element *element);
 
 /**
  * Free Scheme procedure.
+ *
+ * @param  element  Should be a Scheme procedure.
  */
 static void _vtable_free(scheme_element *element);
 
 /**
  * Print Scheme procedure to stdout.
+ *
+ * @param  element  Should be a Scheme procedure.
  */
 static void _vtable_print(scheme_element *element);
 
 /**
  * Copy a procedure.
+ * Returned pointer must be freed with scheme_element_free().
+ *
+ * @param  element  Should be a Scheme procedure.
+ *
+ * @return Copy or NULL if out of memory.
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 
@@ -103,7 +116,14 @@ static scheme_element *_vtable_copy(scheme_element *element)
 
 char *scheme_procedure_get_name(scheme_procedure *proc)
 {
-    return proc->name;
+    // Allocate return buffer.
+    char *returnBuf;
+    int bufLen = strlen(proc->name) + 1;
+    if ((returnBuf = malloc(sizeof(char) * bufLen)) == NULL)
+        return NULL;
+
+    strcpy(returnBuf, proc->name);
+    return returnBuf;
 }
 
 scheme_element *scheme_procedure_apply(scheme_procedure *proc, scheme_element *elem)

@@ -2,7 +2,8 @@
  * Scheme number symbol.
  *
  * This type is compatible with scheme_element.
- * You may pass any scheme_number pointer as a scheme_element pointer.
+ * You may cast any scheme_number pointer to scheme_element and pass it to
+ * any function that accepts a scheme_element pointer.
  */
 
 #ifndef __SCHEME_NUMBER_H__
@@ -18,7 +19,8 @@ typedef struct scheme_number scheme_number;
 
 /**
  * Create new Scheme number symbol.
- * Symbol must be freed afterwards with scheme_element_free().
+ *
+ * Returned pointer must be freed with scheme_element_free().
  *
  * @param  value  Symbol's initial value.
  *

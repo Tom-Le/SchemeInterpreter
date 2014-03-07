@@ -15,7 +15,16 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "symbol?".
- * Check if element is a symbol.
+ * Check if given argument is a symbol.
+ *
+ * Will return NULL if:
+ *   - Supplied element is not in the format (<element>).
+ *   - Out of memory.
+ *
+ * @param  element  A Scheme element.
+ *
+ * @return Scheme boolean #t if argument is a symbol, #f if not,
+ *   or NULL if an error occurred.
  */
 static scheme_element *_symbol_function(scheme_element *element);
 

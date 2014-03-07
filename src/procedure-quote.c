@@ -15,7 +15,15 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "quote".
- * Return the given element as-is.
+ * Return the supplied argument as-is.
+ *
+ * Will return NULL if:
+ *   - Supplied element is not in the format (<element>).
+ *   - Out of memory.
+ *
+ * @param  element  A Scheme element.
+ *
+ * @return Supplied element as-is.
  */
 static scheme_element *_quote_function(scheme_element *element);
 

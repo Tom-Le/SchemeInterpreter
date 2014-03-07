@@ -1,9 +1,9 @@
 /**
  * Scheme symbol.
- * Note: Due to implementation, a symbol can only be 1024 characters long at most.
  *
  * This type is compatible with scheme_element.
- * You may pass any scheme_symbol pointer as a scheme_element pointer.
+ * You may cast any scheme_symbol pointer to scheme_element and pass it to
+ * any function that accepts a scheme_element pointer.
  */
 
 #ifndef __SCHEME_SYMBOL_H__
@@ -11,27 +11,27 @@
 
 #include "scheme-element.h"
 
-// Scheme identifier symbol type.
+// Scheme symbol type.
 #define SCHEME_SYMBOL_TYPE "SCHEME_SYMBOL_TYPE"
 
-// Scheme identifier symbol.
+// Scheme symbol.
 typedef struct scheme_symbol scheme_symbol;
 
 /**
- * Create new Scheme identifier symbol.
+ * Create new Scheme symbol.
  * Symbol must be freed afterwards with scheme_element_free().
  *
- * @param  identifier  Symbol's identifier.
+ * @param  value  Symbol's value.
  *
  * @return Newly created symbol, or NULL if out of memory.
  */
-scheme_symbol *scheme_symbol_new(char *identifier);
+scheme_symbol *scheme_symbol_new(char *value);
 
 /**
- * Get identifier.
+ * Get value.
  * Returned string must be freed with free().
  *
- * @param  symbol  An identifier symbol.
+ * @param  symbol  A symbol.
  */
 char *scheme_symbol_get_value(scheme_symbol *symbol);
 

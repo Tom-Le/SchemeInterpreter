@@ -21,14 +21,23 @@ int main(int argc, char *argv[])
         printf("> ");
         fflush(stdout);
 
+        // Read an expression.
         scheme_element *element = scheme_expression(f);
         if (element == NULL) break;
 
+        // Evaluate expression.
         scheme_element *result = scheme_evaluate(element);
         if (result != NULL)
+        {
+            // Print evaluated result.
             scheme_element_print(result);
+        }
         else
+        {
+            // We were not able to evaluate expression.
+            // Print original expresison instead.
             scheme_element_print(element);
+        }
 
         printf("\n");
 

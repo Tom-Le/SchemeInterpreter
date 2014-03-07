@@ -2,7 +2,8 @@
  * Scheme boolean symbol.
  *
  * This type is compatible with scheme_element.
- * You may pass any scheme_boolean pointer as a scheme_element pointer.
+ * You may cast any scheme_boolean pointer to scheme_element and pass it to
+ * any function that accepts a scheme_element pointer.
  */
 
 #ifndef __SCHEME_BOOLEAN_H__
@@ -24,15 +25,29 @@ typedef struct scheme_boolean scheme_boolean;
 
 /**
  * Get #t symbol.
- * This symbol does not need to be freed.
- * scheme_element_free() will do nothing if it receives this symbol.
+ *
+ * The returned pointer does not need to be freed with scheme_element_free().
+ * You may safely pass it as a parameter to scheme_element_free() as it will
+ * do nothing.
+ *
+ * You cannot make copies of a Scheme boolean symbol. If you pass this pointer
+ * to scheme_element_copy(), it will return the same pointer.
+ *
+ * @return #t symbol.
  */
 scheme_boolean *scheme_boolean_get_true();
 
 /**
  * Get #f symbol.
- * This symbol does not need to be freed.
- * scheme_element_free() will do nothing if it receives this symbol.
+ *
+ * The returned pointer does not need to be freed with scheme_element_free().
+ * You may safely pass it as a parameter to scheme_element_free() as it will
+ * do nothing.
+ *
+ * You cannot make copies of a Scheme boolean symbol. If you pass this pointer
+ * to scheme_element_copy(), it will return the same pointer.
+ *
+ * @return #f symbol.
  */
 scheme_boolean *scheme_boolean_get_false();
 
@@ -40,6 +55,8 @@ scheme_boolean *scheme_boolean_get_false();
  * Get boolean symbol's value.
  *
  * @param  symbol  A boolean symbol.
+ *
+ * @return Symbol's value.
  */
 enum scheme_boolean_value scheme_boolean_get_value(scheme_boolean *symbol);
 

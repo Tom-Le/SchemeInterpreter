@@ -17,27 +17,39 @@ struct scheme_boolean {
  */
 static void _static_init();
 
+// Documentation for virtual functions can be found in header file.
+
 /**
- * Return number symbol's type identifier.
+ * Return number symbol's type identifier string.
  *
  * @param  element  Should be a Scheme boolean symbol.
+ *
+ * @return Type identifier string.
  */
 static char *_vtable_get_type(scheme_element *element);
 
 /**
- * Do not free boolean symbols.
- * This function does nothing.
+ * Scheme boolean symbols are implemented as static variables and
+ * cannot be freed. This function does nothing.
+ *
+ * @param  element  Should be a Scheme boolean symbol.
  */
 static void _vtable_free(scheme_element *element);
 
 /**
  * Print boolean symbol to stdout.
+ *
+ * @param  element  Should be a Scheme boolean symbol.
  */
 static void _vtable_print(scheme_element *element);
 
 /**
- * Do not actually make copy of Scheme boolean symbols.
- * This function simply return its argument.
+ * Scheme boolean symbols are implemented as static variables and
+ * cannot be copied. This function simply returns its parameter.
+ *
+ * @param  element  Should be a Scheme boolean symbol.
+ *
+ * @return Given parameter as-is.
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 

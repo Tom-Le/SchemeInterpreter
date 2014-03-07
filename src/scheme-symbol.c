@@ -5,13 +5,11 @@
 #include "scheme-symbol.h"
 #include "scheme-element-private.h"
 
-#define SCHEME_SYMBOL_INITIAL_LENGTH 1024
-
-// Scheme identifier symbol.
+// Scheme symbol.
 struct scheme_symbol {
     struct scheme_element super;
-    char *identifier;
-    int length;  // Length of identifier NOT including \0
+    char *value;
+    int length;  // Length of value NOT including \0
 };
 
 /**** Private function declarations ****/
@@ -23,6 +21,10 @@ static void _static_init();
 
 /**
  * Return symbol's type identifier.
+ *
+ * @param  element  Should be a Scheme symbol.
+ *
+ * @return Type identifier.
  */
 static char *_vtable_get_type(scheme_element *element);
 
@@ -35,11 +37,17 @@ static void _vtable_free(scheme_element *element);
 
 /**
  * Print symbol to stdout.
+ *
+ * @param  element  Should be a Scheme symbol.
  */
 static void _vtable_print(scheme_element *element);
 
 /**
  * Copy symbol.
+ *
+ * @param  element  Should be a Scheme symbol.
+ *
+ * @return Copy or NULL if out of memory.
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 
@@ -77,7 +85,7 @@ void _vtable_free(scheme_element *element)
 
     scheme_symbol *symbol = (scheme_symbol *)element;
 
-    free((scheme_symbol *)symbol->identifier);
+    free((scheme_symbol *)symbol->value);
     free(symbol);
 }
 
@@ -87,7 +95,7 @@ static void _vtable_print(scheme_element *element)
         return;
 
     scheme_symbol *symbol = (scheme_symbol *)element;
-    printf("%s", symbol->identifier);
+    printf("%s", symbol->value);
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)
@@ -96,12 +104,12 @@ static scheme_element *_vtable_copy(scheme_element *element)
         return NULL;
 
     scheme_symbol *symbol = (scheme_symbol *)element;
-    return (scheme_element *)scheme_symbol_new(symbol->identifier);
+    return (scheme_element *)scheme_symbol_new(symbol->value);
 }
 
 /**** Public function implementations ****/
 
-scheme_symbol *scheme_symbol_new(char *identifier)
+scheme_symbol *scheme_symbol_new(char *value)
 {
     _static_init();
 
@@ -113,18 +121,18 @@ scheme_symbol *scheme_symbol_new(char *identifier)
     // Set up virtual function table.
     symbol->super.vtable = &_scheme_symbol_vtable;
 
-    // Copy identifier string.
+    // Copy value string.
     char *idBuffer;
-    int bufLen = strlen(identifier) + 1;  // Make space for \0
+    int bufLen = strlen(value) + 1;  // Make space for \0
     if ((idBuffer = malloc(sizeof(char) * bufLen)) == NULL)
     {
         free(symbol);
         return NULL;
     }
 
-    strcpy(idBuffer, identifier);
+    strcpy(idBuffer, value);
 
-    symbol->identifier = idBuffer;
+    symbol->value = idBuffer;
     symbol->length = bufLen;
 
     return symbol;
@@ -138,12 +146,12 @@ char *scheme_symbol_get_value(scheme_symbol *symbol)
     if ((returnBuf = malloc(sizeof(char) * length)) == NULL)
         return NULL;
 
-    // Copy identifier.
-    char *identifier = symbol->identifier;
+    // Copy value.
+    char *value = symbol->value;
     int i;
-    for (i = 0; i < length && identifier[i] != '\0'; ++i)
+    for (i = 0; i < length && value[i] != '\0'; ++i)
     {
-        returnBuf[i] = identifier[i];
+        returnBuf[i] = value[i];
     }
     returnBuf[i] = '\0';
 
