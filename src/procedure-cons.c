@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "eval.h"
+#include "procedure-utils.h"
 #include "scheme-data-types.h"
 #include "scheme-procedure-init.h"
 
@@ -32,27 +33,22 @@ static scheme_element *_cons_function(scheme_element *element);
 
 static scheme_element *_cons_function(scheme_element *element)
 {
-    // Element must be a pair.
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
-        return NULL;
+    // Get arguments.
+    int argCount;
+    scheme_element **args = procedure_get_arguments(element, &argCount);
 
-    // Element must not be the empty pair.
-    if (scheme_pair_is_empty((scheme_pair *)element))
+    // Check if argument list is invalid.
+    if (argCount == -1) return NULL;
+    else if (argCount != 2)
+    {
+        // Wrong number of arguments.
+        if (args != NULL) free(args);
         return NULL;
+    }
 
-    // Get first argument.
-    scheme_element *firstArg = scheme_pair_get_first((scheme_pair *)element);
-
-    // Get second argument.
-    scheme_element *rest = scheme_pair_get_second((scheme_pair *)element);
-    if (!scheme_element_is_type(rest, SCHEME_PAIR_TYPE))
-        return NULL;
-    scheme_element *secondArg = scheme_pair_get_first((scheme_pair *)rest);
-
-    // Make sure there are no more arguments.
-    rest = scheme_pair_get_second((scheme_pair *)rest);
-    if (!scheme_pair_is_empty((scheme_pair *)rest))
-        return NULL;
+    scheme_element *firstArg = *args;
+    scheme_element *secondArg = *(args+1);
+    free(args);
 
     // Evaluate first and second arguments.
     firstArg = scheme_evaluate(firstArg);

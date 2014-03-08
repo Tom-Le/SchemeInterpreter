@@ -12,10 +12,12 @@
  * @param  file   A Scheme file.
  * @param  token  Initial token.
  * @param  type   Initial token's type.
+ * @param  err    If an error occurs and this is not NULL, it is set
+ *   to a value indicating the nature of the error.
  *
- * @return A Scheme element, or NULL if file is empty.
+ * @return A Scheme element, or NULL if an error occured.
  */
-static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme_token_type type);
+static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme_token_type type, enum scheme_parser_error *err);
 
 /**
  * Parse a Scheme pair from a Scheme file.
@@ -26,17 +28,20 @@ static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme
  * @param  file   A Scheme file.
  * @param  token  Initial token.
  * @param  type   Initial token's type.
+ * @param  err    If an error occurs and this is not NULL, it is set
+ *   to a value indicating the nature of the error.
  *
  * @return A Scheme pair, or NULL if no pair was parsed.
  */
-static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, scheme_token_type type);
+static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, scheme_token_type type, enum scheme_parser_error *err);
 
 /**** Private function implementations ****/
 
-static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme_token_type type)
+static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme_token_type type, enum scheme_parser_error *err)
 {
     if (type == SCHEME_TOKEN_TYPE_NULL)
     {
+        if (err != NULL) *err = SCHEME_PARSER_ERROR_EOF;
         return NULL;
     }
 
@@ -46,7 +51,7 @@ static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme
         scheme_token_type nextType;
         char *nextToken = scheme_get_token(file, &nextType);
 
-        scheme_pair *pair = _scheme_expression_pair(file, nextToken, nextType);
+        scheme_pair *pair = _scheme_expression_pair(file, nextToken, nextType, err);
         free(nextToken);
 
         return (scheme_element *)pair;
@@ -59,7 +64,7 @@ static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme
         scheme_token_type nextType;
         char *nextToken = scheme_get_token(file, &nextType);
 
-        scheme_element *element = _scheme_expression(file, nextToken, nextType);
+        scheme_element *element = _scheme_expression(file, nextToken, nextType, err);
         free(nextToken);
 
         // Construct (quote <element>) list.
@@ -97,16 +102,18 @@ static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme
     }
 
     // Should not be reachable.
+    if (err != NULL) *err = SCHEME_PARSER_ERROR_SYNTAX;
     return NULL;
 }
 
-static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, scheme_token_type type)
+static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, scheme_token_type type, enum scheme_parser_error *err)
 {
     // First element of pair can be any Scheme expression.
-    scheme_element *first = _scheme_expression(file, token, type);
+    scheme_element *first = _scheme_expression(file, token, type, err);
     if (first == NULL)
     {
         // End of file.
+        if (err != NULL) *err = SCHEME_PARSER_ERROR_EOF;
         return NULL;
     }
 
@@ -121,6 +128,7 @@ static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, sche
     {
         // End of file.
         scheme_element_free(first);
+        if (err != NULL) *err = SCHEME_PARSER_ERROR_EOF;
         return NULL;
     }
 
@@ -130,7 +138,7 @@ static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, sche
     {
         free(nextToken);
         nextToken = scheme_get_token(file, &nextType);
-        second = _scheme_expression(file, nextToken, nextType);
+        second = _scheme_expression(file, nextToken, nextType, err);
 
         // We expect the following token to be a right parenthesis.
         free(nextToken);
@@ -141,6 +149,7 @@ static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, sche
             // Expectation not met.
             scheme_element_free(first);
             scheme_element_free(second);
+            if (err != NULL) *err = SCHEME_PARSER_ERROR_SYNTAX;
             return NULL;
         }
 
@@ -157,7 +166,7 @@ static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, sche
 
     // Else, we are reading the next element of a Scheme list.
     // Treat this element as the first element of a nested pair.
-    second = (scheme_element *)_scheme_expression_pair(file, nextToken, nextType);
+    second = (scheme_element *)_scheme_expression_pair(file, nextToken, nextType, err);
     free(nextToken);
 
     return scheme_pair_new(first, second);
@@ -165,14 +174,14 @@ static scheme_pair *_scheme_expression_pair(scheme_file *file, char *token, sche
 
 /**** Public functions ****/
 
-scheme_element *scheme_expression(scheme_file *file)
+scheme_element *scheme_expression(scheme_file *file, enum scheme_parser_error *err)
 {
     scheme_token_type type;
     char *token;
     scheme_element *result;
 
     token = scheme_get_token(file, &type);
-    result = _scheme_expression(file, token, type);
+    result = _scheme_expression(file, token, type, err);
 
     if (token != NULL) free(token);
     return result;

@@ -2,6 +2,9 @@
  * Utilities for strings.
  */
 
+#ifndef __STRUTIL_H__
+#define __STRUTIL_H__
+
 #include <stdlib.h>
 
 /**
@@ -16,3 +19,5 @@
  * @return New string.
  */
 char *reallocate_char(char *s, int size, int newSize);
+
+#endif

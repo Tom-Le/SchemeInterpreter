@@ -1,37 +1,39 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "eval.h"
 #include "procedure-utils.h"
 #include "scheme-data-types.h"
 #include "scheme-procedure-init.h"
 
-#include "procedure-symbol.h"
+#include "procedure-null.h"
 
 /**** Private variables ****/
 
-static scheme_procedure _procedure_symbol;
+static scheme_procedure _procedure_null;
+
 static int _proc_initd = 0;
 
 /**** Private function declarations ****/
 
 /**
- * Implementation of Scheme procedure "symbol?".
- * Check if given argument is a symbol.
+ * Implementation of Scheme procedure "null?".
+ * Check if a Scheme element is the empty pair.
  *
  * Will return NULL if:
- *   - Supplied element is not in the format (<element>).
+ *   - Supplied element is not a pair in the format (<element>).
  *   - Out of memory.
  *
  * @param  element  A Scheme element.
  *
- * @return Scheme boolean #t if argument is a symbol, #f if not,
- *   or NULL if an error occurred.
+ * @return Scheme boolean #t if two elements are equal, #f if not, or NULL
+ *   if an error occurred.
  */
-static scheme_element *_symbol_function(scheme_element *element);
+static scheme_element *_null_function(scheme_element *element);
 
 /**** Private function implementations ****/
 
-static scheme_element *_symbol_function(scheme_element *element)
+static scheme_element *_null_function(scheme_element *element)
 {
     // Get arguments.
     int argCount;
@@ -51,26 +53,23 @@ static scheme_element *_symbol_function(scheme_element *element)
 
     // Evaluate argument.
     arg = scheme_evaluate(arg);
+    if (arg == NULL) return NULL;
 
-    // Check arg's type.
-    int isSymbol = scheme_element_is_type(arg, SCHEME_SYMBOL_TYPE);
+    int isEmpty = scheme_element_is_type(arg, SCHEME_PAIR_TYPE)
+        && scheme_pair_is_empty((scheme_pair *)arg);
     scheme_element_free(arg);
 
-    if (isSymbol)
-        return (scheme_element *)scheme_boolean_get_true();
-    else
-        return (scheme_element *)scheme_boolean_get_false();
+    return (scheme_element *)(isEmpty ? scheme_boolean_get_true() : scheme_boolean_get_false());
 }
 
-/**** Public function implementations ****/
-
-scheme_procedure *scheme_procedure_symbol()
+/**** Public function implementation ****/
+scheme_procedure *scheme_procedure_null()
 {
     if (!_proc_initd)
     {
-        scheme_procedure_init(&_procedure_symbol, PROCEDURE_SYMBOL_NAME, _symbol_function);
+        scheme_procedure_init(&_procedure_null, PROCEDURE_NULL_NAME, _null_function);
         _proc_initd = 1;
     }
 
-    return &_procedure_symbol;
+    return &_procedure_null;
 }

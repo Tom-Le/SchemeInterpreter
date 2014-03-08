@@ -40,6 +40,8 @@ static void _init_builtin()
     _builtins[2] = scheme_procedure_cdr();
     _builtins[3] = scheme_procedure_symbol();
     _builtins[4] = scheme_procedure_cons();
+    _builtins[5] = scheme_procedure_equal();
+    _builtins[6] = scheme_procedure_null();
 
     _static_initialized = 1;
 }

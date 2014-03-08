@@ -22,8 +22,25 @@ int main(int argc, char *argv[])
         fflush(stdout);
 
         // Read an expression.
-        scheme_element *element = scheme_expression(f);
-        if (element == NULL) break;
+        enum scheme_parser_error parserError;
+        scheme_element *element = scheme_expression(f, &parserError);
+        if (element == NULL)
+        {
+            if (parserError == SCHEME_PARSER_ERROR_EOF)
+            {
+                // No more input to read.
+                break;
+            }
+            else if (parserError == SCHEME_PARSER_ERROR_SYNTAX)
+            {
+                printf("Syntax error.\n");
+                continue;
+            }
+            else
+            {
+                continue;
+            }
+        }
 
         // Evaluate expression.
         scheme_element *result = scheme_evaluate(element);

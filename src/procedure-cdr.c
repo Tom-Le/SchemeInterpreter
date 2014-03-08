@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "eval.h"
+#include "procedure-utils.h"
 #include "scheme-data-types.h"
 #include "scheme-procedure-init.h"
 
@@ -31,18 +32,21 @@ static scheme_element *_cdr_function(scheme_element *element);
 
 static scheme_element *_cdr_function(scheme_element *element)
 {
-    // Element must be a pair.
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
-        return NULL;
+    // Get arguments.
+    int argCount;
+    scheme_element **args = procedure_get_arguments(element, &argCount);
 
-    // Get argument.
-    scheme_element *arg = scheme_pair_get_first((scheme_pair *)element);
-    if (arg == NULL) return NULL;
-
-    // Make sure there are no more arguments.
-    scheme_element *rest = scheme_pair_get_second((scheme_pair *)element);
-    if (!scheme_pair_is_empty((scheme_pair *)rest))
+    // Check if argument list is invalid.
+    if (argCount == -1) return NULL;
+    else if (argCount != 1)
+    {
+        // Wrong number of arguments.
+        if (args != NULL) free(args);
         return NULL;
+    }
+
+    scheme_element *arg = *args;
+    free(args);
 
     // Evaluate argument.
     scheme_element *result = scheme_evaluate(arg);

@@ -26,7 +26,7 @@ static void _static_init();
  *
  * @return Type identifier.
  */
-static char *_vtable_get_type(scheme_element *element);
+static char *_vtable_get_type();
 
 /**
  * Free pair. Will also free its first and second elements.
@@ -59,6 +59,17 @@ static void _vtable_print(scheme_element *element);
  */
 static void _do_print(scheme_pair *pair);
 
+/**
+ * Compare a Scheme pair to another pair.
+ * Will return 0 if either pointer is not a Scheme pair.
+ *
+ * @param  element  Should be a Scheme pair.
+ * @param  other    A Scheme element.
+ *
+ * @return 1 if equal, 0 otherwise.
+ */
+static int _vtable_compare(scheme_element *element, scheme_element *other);
+
 /**** Private variables ****/
 
 // Static variables for empty list.
@@ -79,6 +90,7 @@ static void _static_init()
         _scheme_pair_vtable.free = _vtable_free;
         _scheme_pair_vtable.print = _vtable_print;
         _scheme_pair_vtable.copy = _vtable_copy;
+        _scheme_pair_vtable.compare = _vtable_compare;
 
         _empty_pair.super.vtable = &_scheme_pair_vtable;
         _empty_pair.first = NULL;
@@ -88,7 +100,7 @@ static void _static_init()
     }
 }
 
-static char *_vtable_get_type(scheme_element *element)
+static char *_vtable_get_type()
 {
     return SCHEME_PAIR_TYPE;
 }
@@ -165,6 +177,22 @@ static void _do_print(scheme_pair *pair)
         printf(" . ");
         scheme_element_print(pair->second);
     }
+}
+
+static int _vtable_compare(scheme_element *element, scheme_element *other)
+{
+    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE)) return 0;
+    if (!scheme_element_is_type(other, SCHEME_PAIR_TYPE)) return 0;
+
+    scheme_pair *this = (scheme_pair *)element;
+    scheme_pair *that = (scheme_pair *)other;
+
+    // Special treatment for empty pairs.
+    if (scheme_pair_is_empty(this) && scheme_pair_is_empty(that))
+        return 1;
+
+    return scheme_element_compare(this->first, that->first)
+        && scheme_element_compare(this->second, that->second);
 }
 
 /**** Public function implementations ****/

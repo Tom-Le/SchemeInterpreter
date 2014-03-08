@@ -15,6 +15,8 @@ typedef struct scheme_element scheme_element;
  * A Scheme type's identifier string is usually defined in its
  * corresponding header file.
  *
+ * You should not free the returned string.
+ *
  * @param  element  A Scheme element.
  *
  * @return String identifying element's type.
@@ -49,6 +51,18 @@ void scheme_element_print(scheme_element *element);
  * @result A copy or NULL if out of memory.
  */
 scheme_element *scheme_element_copy(scheme_element *element);
+
+/**
+ * Compare a Scheme element to another element.
+ *
+ * If either is NULL, return 0.
+ *
+ * @param  element  A Scheme element.
+ * @param  other    Element to compare to.
+ *
+ * @return 1 if elements are equal, 0 otherwise.
+ */
+int scheme_element_compare(scheme_element *element, scheme_element *other);
 
 /**** Convenience functions ****/
 

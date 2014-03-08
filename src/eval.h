@@ -2,6 +2,9 @@
  * Scheme expression evaluator.
  */
 
+#ifndef __SCHEME_EVALUATOR_H__
+#define __SCHEME_EVALUATOR_H__
+
 #include "scheme-data-types.h"
 
 /**
@@ -14,3 +17,5 @@
  *     be evaluated.
  */
 scheme_element *scheme_evaluate(scheme_element *element);
+
+#endif

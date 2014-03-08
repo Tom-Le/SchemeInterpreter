@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "eval.h"
+#include "procedure-utils.h"
 #include "scheme-data-types.h"
 #include "scheme-procedure-init.h"
 
@@ -31,22 +32,24 @@ static scheme_element *_quote_function(scheme_element *element);
 
 static scheme_element *_quote_function(scheme_element *element)
 {
-    // Element must be a pair.
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
-        return NULL;
+    // Get arguments.
+    int argCount;
+    scheme_element **args = procedure_get_arguments(element, &argCount);
 
-    // Element must not be the empty pair.
-    if (scheme_pair_is_empty((scheme_pair *)element))
+    // Check if argument list is invalid.
+    if (argCount == -1) return NULL;
+    else if (argCount != 1)
+    {
+        // Wrong number of arguments.
+        if (args != NULL) free(args);
         return NULL;
+    }
 
-    // Make sure there is only one argument.
-    scheme_element *rest = scheme_pair_get_second((scheme_pair *)element);
-    if (!scheme_pair_is_empty((scheme_pair *)rest))
-        return NULL;
+    scheme_element *arg = *args;
+    free(args);
 
-    // Return copy of pair's first element.
-    scheme_element *first = scheme_pair_get_first((scheme_pair *)element);
-    return scheme_element_copy(first);
+    // Simply return a copy of argument.
+    return scheme_element_copy(arg);
 }
 
 scheme_procedure *scheme_procedure_quote()

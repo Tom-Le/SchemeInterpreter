@@ -11,7 +11,7 @@
 char *scheme_element_get_type(scheme_element *element)
 {
     if (element == NULL) return "";
-    return element->vtable->get_type(element);
+    return element->vtable->get_type();
 }
 
 int scheme_element_is_type(scheme_element *element, char *type)
@@ -36,4 +36,12 @@ scheme_element *scheme_element_copy(scheme_element *element)
 {
     if (element == NULL) return NULL;
     return element->vtable->copy(element);
+}
+
+int scheme_element_compare(scheme_element *element, scheme_element *other)
+{
+    if (element == NULL) return 0;
+    if (other == NULL) return 0;
+
+    return element->vtable->compare(element, other);
 }

@@ -26,7 +26,7 @@ static void _static_init();
  *
  * @return Type identifier.
  */
-static char *_vtable_get_type(scheme_element *element);
+static char *_vtable_get_type();
 
 /**
  * Free Scheme symbol.
@@ -51,6 +51,17 @@ static void _vtable_print(scheme_element *element);
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 
+/**
+ * Compare Scheme symbol to another symbol.
+ * Will return 0 if either pointers are not symbols.
+ *
+ * @param  element  Should be a Scheme symbol.
+ * @param  other    A Scheme element.
+ *
+ * @return 1 if equal, 0 otherwise.
+ */
+static int _vtable_compare(scheme_element *element, scheme_element *other);
+
 /**** Private variables ****/
 
 // Global virtual function table.
@@ -68,12 +79,13 @@ static void _static_init()
         _scheme_symbol_vtable.free = _vtable_free;
         _scheme_symbol_vtable.print = _vtable_print;
         _scheme_symbol_vtable.copy = _vtable_copy;
+        _scheme_symbol_vtable.compare = _vtable_compare;
 
         _static_initialized = 1;
     }
 }
 
-static char *_vtable_get_type(scheme_element *element)
+static char *_vtable_get_type()
 {
     return SCHEME_SYMBOL_TYPE;
 }
@@ -105,6 +117,17 @@ static scheme_element *_vtable_copy(scheme_element *element)
 
     scheme_symbol *symbol = (scheme_symbol *)element;
     return (scheme_element *)scheme_symbol_new(symbol->value);
+}
+
+static int _vtable_compare(scheme_element *element, scheme_element *other)
+{
+    if (!scheme_element_is_type(element, SCHEME_SYMBOL_TYPE)) return 0;
+    if (!scheme_element_is_type(other, SCHEME_SYMBOL_TYPE)) return 0;
+
+    char *firstVal = ((scheme_symbol *)element)->value;
+    char *secondVal = ((scheme_symbol *)other)->value;
+
+    return strcmp(firstVal, secondVal) == 0;
 }
 
 /**** Public function implementations ****/

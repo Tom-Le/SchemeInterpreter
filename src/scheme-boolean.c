@@ -26,7 +26,7 @@ static void _static_init();
  *
  * @return Type identifier string.
  */
-static char *_vtable_get_type(scheme_element *element);
+static char *_vtable_get_type();
 
 /**
  * Scheme boolean symbols are implemented as static variables and
@@ -53,6 +53,17 @@ static void _vtable_print(scheme_element *element);
  */
 static scheme_element *_vtable_copy(scheme_element *element);
 
+/**
+ * Compare boolean symbol to another symbol.
+ * Will return 0 if either pointers are not boolean symbols.
+ *
+ * @param  element  Should be a Scheme boolean symbol.
+ * @param  other  A Scheme element.
+ *
+ * @return 1 if equal, 0 otherwise.
+ */
+static int _vtable_compare(scheme_element *element, scheme_element *other);
+
 /**** Private variables ****/
 
 // Static variables for #t and #f symbols.
@@ -74,6 +85,7 @@ static void _static_init()
         _scheme_boolean_vtable.free = _vtable_free;
         _scheme_boolean_vtable.print = _vtable_print;
         _scheme_boolean_vtable.copy = _vtable_copy;
+        _scheme_boolean_vtable.compare = _vtable_compare;
 
         _scheme_boolean_true.super.vtable = &_scheme_boolean_vtable;
         _scheme_boolean_true.value = SCHEME_BOOLEAN_VALUE_TRUE;
@@ -85,7 +97,7 @@ static void _static_init()
     }
 }
 
-static char *_vtable_get_type(scheme_element *element)
+static char *_vtable_get_type()
 {
     return SCHEME_BOOLEAN_TYPE;
 }
@@ -110,6 +122,15 @@ static void _vtable_print(scheme_element *element)
 static scheme_element *_vtable_copy(scheme_element *element)
 {
     return element;
+}
+
+static int _vtable_compare(scheme_element *element, scheme_element *other)
+{
+    if (!scheme_element_is_type(element, SCHEME_BOOLEAN_TYPE)) return 0;
+    if (!scheme_element_is_type(other, SCHEME_BOOLEAN_TYPE)) return 0;
+
+    // Boolean symbols are static, only need to compare pointers.
+    return element == other;
 }
 
 /**** Public function implementations ****/
