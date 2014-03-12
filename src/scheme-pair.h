@@ -20,19 +20,17 @@
 typedef struct scheme_pair scheme_pair;
 
 /**
- * Create new Scheme pair.
+ * Create new Scheme pair, which will store a copy of the given elements.
  *
- * Returned pointer must be freed with scheme_element_free(). When passed to
- * this function, the pair's first and second function will also be freed.
+ * Returned pointer must be freed with scheme_element_free(). The pair's first
+ * and second element will also be freed.
  *
  * If you would like to retain a pair's first and/or second elements before
  * freeing the pair, consider making a copy of the those elements using
  * scheme_element_copy().
  *
- * If you make a copy of a pair using scheme_element_copy(), you will receive
- * a deep copy, with first and second elements also being copies of the original
- * pair's elements. If you free the original pair, the copy will be unaffected,
- * and vice versa.
+ * A copy of a pair created by scheme_element_copy() will also include copies
+ * of its first and second elements.
  *
  * @param  first   Pair's first element.
  * @param  second  Pair's second element.

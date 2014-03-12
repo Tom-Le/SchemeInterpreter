@@ -35,4 +35,15 @@ scheme_symbol *scheme_symbol_new(char *value);
  */
 char *scheme_symbol_get_value(scheme_symbol *symbol);
 
+/**
+ * Compare Scheme symbol's value to a string.
+ * Will return 0 if either pointer is NULL.
+ *
+ * @param  symbol  A symbol.
+ * @param  value   A string.
+ *
+ * @return 1 if string and symbol's values are equal, 0 otherwise.
+ */
+int scheme_symbol_value_equals(scheme_symbol *symbol, char *value);
+
 #endif

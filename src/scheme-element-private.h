@@ -3,6 +3,8 @@
  *
  * This header file should only be included by code declaring
  * a Scheme data type.
+ *
+ * Functions in here are implemented in scheme-element.c
  */
 
 #ifndef __SCHEME_ELEMENT_PRIVATE_H__
@@ -30,5 +32,15 @@ struct scheme_element_vtable {
     scheme_element *(*copy)(scheme_element *);
     int (*compare)(scheme_element *, scheme_element *);
 };
+
+/**** Public functions ****/
+
+/**
+ * Clone an existing virtual function table onto another table.
+ *
+ * @param  target  Table to be cloned to.
+ * @param  source  Table to be cloned from.
+ */
+void scheme_element_vtable_clone(struct scheme_element_vtable *target, struct scheme_element_vtable *source);
 
 #endif

@@ -22,8 +22,6 @@ static void _static_init();
 /**
  * Return pair's type identifier string.
  *
- * @param  element  Should be a Scheme pair.
- *
  * @return Type identifier.
  */
 static char *_vtable_get_type();
@@ -131,11 +129,7 @@ static scheme_element *_vtable_copy(scheme_element *element)
     if (pair == &_empty_pair)
         return element;
 
-    // Make copies of its elements.
-    scheme_element *firstCopy = scheme_element_copy(pair->first);
-    scheme_element *secondCopy = scheme_element_copy(pair->second);
-
-    return (scheme_element *)scheme_pair_new(firstCopy, secondCopy);
+    return (scheme_element *)scheme_pair_new(pair->first, pair->second);
 }
 
 static void _vtable_print(scheme_element *element)
@@ -206,8 +200,8 @@ scheme_pair *scheme_pair_new(scheme_element *first, scheme_element *second)
         return NULL;
 
     pair->super.vtable = &_scheme_pair_vtable;
-    pair->first = first;
-    pair->second = second;
+    pair->first = scheme_element_copy(first);
+    pair->second = scheme_element_copy(second);
 
     return pair;
 }

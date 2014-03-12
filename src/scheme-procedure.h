@@ -9,7 +9,7 @@
 #ifndef __SCHEME_PROCEDURE_H__
 #define __SCHEME_PROCEDURE_H__
 
-#include "scheme-element.h"
+#include "scheme-data-types.h"
 
 // Scheme procedure type.
 #define SCHEME_PROCEDURE_TYPE "SCHEME_PROCEDURE_TYPE"
@@ -28,20 +28,22 @@ char *scheme_procedure_get_name(scheme_procedure *proc);
 /**
  * Apply Scheme procedure on an element.
  *
- * Execute function stored in Scheme procedure with given element as
- * the argument and return whatever this function returns.
+ * Execute function pointer stored in Scheme procedure with given element
+ * as argument to the function. Return what the function returns.
+ *
  * Caller must free returned pointer with scheme_element_free().
  *
- * This function itself returns NULL if procedure does not contain
- * any function. The function stored in a procedure may return
- * NULL as needed.
+ * This function itself returns NULL if procedure does not contain any
+ * function. The function stored in a procedure may return NULL as
+ * necessary, usually to indicate that it could not evaluate an expression.
  *
- * @param  proc  A Scheme procedure.
- * @param  elem  A Scheme element.
+ * @param  procedure  A Scheme procedure.
+ * @param  element    A Scheme element.
+ * @param  namespace  Active namespace.
  *
  * @return Result of applying procedure, or NULL if procedure contains
  *   no function.
  */
-scheme_element *scheme_procedure_apply(scheme_procedure *proc, scheme_element *elem);
+scheme_element *scheme_procedure_apply(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
 #endif

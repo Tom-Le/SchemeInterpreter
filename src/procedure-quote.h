@@ -4,7 +4,7 @@
  */
 
 #ifndef __SCHEME_PROCEDURE_QUOTE_H__
-#define __SCHEME_PROCEDURE_QUOTE_H__ 
+#define __SCHEME_PROCEDURE_QUOTE_H__
 
 #include "scheme-procedure.h"
 

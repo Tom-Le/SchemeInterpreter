@@ -11,7 +11,7 @@
 /**** Private variables ****/
 
 static scheme_procedure _procedure_equal;
-
+static struct scheme_element_vtable _procedure_vtable;
 static int _proc_initd = 0;
 
 /**** Private function declarations ****/
@@ -21,15 +21,25 @@ static int _proc_initd = 0;
  * Compare two Scheme elements given as argument.
  *
  * Will return NULL if:
- *   - Supplied element is not a pair in the format (<element> <element>).
- *   - Out of memory.
+ * - Supplied element is not a pair in the format (<element> <element>).
+ * - Out of memory.
  *
- * @param  element  A Scheme element.
+ * @param  procedure  Procedure that refers to this function.
+ * @param  element    A Scheme element.
+ * @param  namespace  Active namespace.
  *
  * @return Scheme boolean #t if two elements are equal, #f if not, or NULL
- *   if an error occurred.
+ *         if an error occurs.
  */
-static scheme_element *_equal_function(scheme_element *element);
+static scheme_element *_equal_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
+
+/**
+ * Prevent freeing this statically allocated Scheme procedure.
+ * This function does nothing.
+ *
+ * @param  element  Should be this procedure.
+ */
+static void _procedure_free(scheme_element *element) {}
 
 /**
  * Check if first argument is the empty pair and second argument
@@ -37,17 +47,17 @@ static scheme_element *_equal_function(scheme_element *element);
  *
  * Convenience function used in _equal_function().
  *
- * @param  first  A Scheme element.
+ * @param  first   A Scheme element.
  * @param  second  A Scheme element.
  *
  * @return 1 if first argument is the empty pair and second argument
- *   is the #f symbol, 0 otherwise.
+ *         is the #f symbol, 0 otherwise.
  */
 static inline int _empty_and_false(scheme_element *first, scheme_element *second);
 
 /**** Private function implementations ****/
 
-static scheme_element *_equal_function(scheme_element *element)
+static scheme_element *_equal_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
     // Get arguments.
     int argCount;
@@ -67,8 +77,8 @@ static scheme_element *_equal_function(scheme_element *element)
     free(args);
 
     // Evaluate arguments.
-    firstArg = scheme_evaluate(firstArg);
-    secondArg = scheme_evaluate(secondArg);
+    firstArg = scheme_evaluate(firstArg, namespace);
+    secondArg = scheme_evaluate(secondArg, namespace);
     if (firstArg == NULL || secondArg == NULL)
     {
         scheme_element_free(firstArg);
@@ -116,6 +126,11 @@ scheme_procedure *scheme_procedure_equal()
     if (!_proc_initd)
     {
         scheme_procedure_init(&_procedure_equal, PROCEDURE_EQUAL_NAME, _equal_function);
+
+        scheme_element_vtable_clone(&_procedure_vtable, _procedure_equal.super.vtable);
+        _procedure_vtable.free = _procedure_free;
+        _procedure_equal.super.vtable = &_procedure_vtable;
+
         _proc_initd = 1;
     }
 

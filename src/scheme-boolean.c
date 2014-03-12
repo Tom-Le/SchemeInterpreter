@@ -22,8 +22,6 @@ static void _static_init();
 /**
  * Return number symbol's type identifier string.
  *
- * @param  element  Should be a Scheme boolean symbol.
- *
  * @return Type identifier string.
  */
 static char *_vtable_get_type();
@@ -58,7 +56,7 @@ static scheme_element *_vtable_copy(scheme_element *element);
  * Will return 0 if either pointers are not boolean symbols.
  *
  * @param  element  Should be a Scheme boolean symbol.
- * @param  other  A Scheme element.
+ * @param  other    A Scheme element.
  *
  * @return 1 if equal, 0 otherwise.
  */

@@ -16,8 +16,6 @@ static void _static_init();
 /**
  * Return procedure's type identifier.
  *
- * @param  element  Should be a Scheme procedure.
- *
  * @return Type identifier.
  */
 static char *_vtable_get_type();
@@ -152,10 +150,10 @@ char *scheme_procedure_get_name(scheme_procedure *proc)
     return returnBuf;
 }
 
-scheme_element *scheme_procedure_apply(scheme_procedure *proc, scheme_element *elem)
+scheme_element *scheme_procedure_apply(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
-    if (proc->function == NULL) return NULL;
-    return proc->function(elem);
+    if (procedure->function == NULL) return NULL;
+    return procedure->function(procedure, element, namespace);
 }
 
 /**** Implementations of public functions from scheme-procedure-init.h ****/

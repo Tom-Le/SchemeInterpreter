@@ -38,6 +38,12 @@ scheme_element **procedure_get_arguments(scheme_element *element, int *count)
 
     // Allocate list of arguments.
     scheme_element **list = (scheme_element **)malloc(sizeof(scheme_element *) * argCount);
+    if (list == NULL)
+    {
+        *count = -1;
+        return NULL;
+    }
+
     rest = element;
     for (int i = 0; i < argCount; ++i)
     {

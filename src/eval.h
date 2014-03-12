@@ -11,11 +11,12 @@
  * Evaluate a Scheme element.
  * Returned element must be freed with scheme_element_free().
  *
- * @param  element  Element to be evaluated.
+ * @param  element    Element to be evaluated.
+ * @param  namespace  A Scheme namespace. Symbols found during evaluation will
+ *                    be resolved using this namespace.
  *
- * @return Result of evaluation, or NULL if element could not
- *     be evaluated.
+ * @return Result, or NULL if expression could not be evaluated.
  */
-scheme_element *scheme_evaluate(scheme_element *element);
+scheme_element *scheme_evaluate(scheme_element *element, scheme_namespace *namespace);
 
 #endif

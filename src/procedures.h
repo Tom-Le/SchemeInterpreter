@@ -13,7 +13,10 @@
 #include "procedure-cons.h"
 #include "procedure-equal.h"
 #include "procedure-null.h"
-
-#define PROCEDURE_COUNT 7
+#include "procedure-append.h"
+#include "procedure-assoc.h"
+#include "procedure-cond.h"
+#include "procedure-if.h"
+#include "procedure-define.h"
 
 #endif

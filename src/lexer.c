@@ -1,7 +1,11 @@
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
 #include "lexer.h"
 
 #define SCHEME_BUFFER_MAX_SIZE 1024
-#define SCHEME_RETURN_TOKEN_INITIAL_SIZE 10
+#define SCHEME_RETURN_TOKEN_INITIAL_SIZE 64
 
 // Scheme file representation.
 struct scheme_file {
@@ -157,6 +161,12 @@ char *scheme_get_token(scheme_file *file, scheme_token_type *type)
     // Return token.
     // For convenience, this is assumed to be at least 4 chars long.
     char *token = malloc(sizeof(char) * SCHEME_RETURN_TOKEN_INITIAL_SIZE);
+    if (token == NULL)
+    {
+        if (type != NULL) *type = SCHEME_TOKEN_TYPE_NULL;
+        return NULL;
+    }
+
     int tokenSize = SCHEME_RETURN_TOKEN_INITIAL_SIZE;
 
     // Case 1: Right parenthesis.
@@ -244,8 +254,10 @@ char *scheme_get_token(scheme_file *file, scheme_token_type *type)
         if (count == tokenSize)
         {
             int tokenNewSize = tokenSize * 2;
+            char *tokenNew = malloc(sizeof(char) * tokenNewSize);
+            if (tokenNew == NULL) return NULL;
 
-            char *tokenNew = reallocate_char(token, tokenSize, tokenNewSize);
+            memcpy(tokenNew, token, sizeof(char) * tokenSize);
 
             free(token);
 

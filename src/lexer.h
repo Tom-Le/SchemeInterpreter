@@ -6,11 +6,6 @@
 #define __SCHEME_LEXICAL_ANALYZER_H__
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#include "strutil.h"
 
 // Scheme file.
 typedef struct scheme_file scheme_file;
@@ -43,7 +38,7 @@ typedef enum scheme_token_type {
  * @param  path  Path to file to be opened.
  *
  * @return Scheme file, or NULL if the path could not be opened,
- *     or if out of memory.
+ *         or if out of memory.
  */
 scheme_file *scheme_open_path(const char *path);
 

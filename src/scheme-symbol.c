@@ -22,8 +22,6 @@ static void _static_init();
 /**
  * Return symbol's type identifier.
  *
- * @param  element  Should be a Scheme symbol.
- *
  * @return Type identifier.
  */
 static char *_vtable_get_type();
@@ -179,4 +177,11 @@ char *scheme_symbol_get_value(scheme_symbol *symbol)
     returnBuf[i] = '\0';
 
     return returnBuf;
+}
+
+int scheme_symbol_value_equals(scheme_symbol *symbol, char *value)
+{
+    if (symbol == NULL || value == NULL) return 0;
+
+    return strcmp(symbol->value, value) == 0;
 }

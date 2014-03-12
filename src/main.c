@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "scheme-data-types.h"
 #include "parser.h"
 #include "eval.h"
 
@@ -16,6 +17,10 @@ int main(int argc, char *argv[])
 
     // Parse expressions from stdin until terminated.
     scheme_file *f = scheme_open_file(stdin);
+
+    // Set up base namespace.
+    scheme_namespace *baseNamespace = scheme_namespace_base_new(NULL);
+
     while (1)
     {
         printf("> ");
@@ -23,47 +28,41 @@ int main(int argc, char *argv[])
 
         // Read an expression.
         enum scheme_parser_error parserError;
-        scheme_element *element = scheme_expression(f, &parserError);
-        if (element == NULL)
+        scheme_element *expression = scheme_expression(f, &parserError);
+
+        if (expression == NULL)
         {
+            // End of file.
             if (parserError == SCHEME_PARSER_ERROR_EOF)
-            {
-                // No more input to read.
                 break;
-            }
-            else if (parserError == SCHEME_PARSER_ERROR_SYNTAX)
-            {
-                printf("Syntax error.\n");
-                continue;
-            }
-            else
-            {
-                continue;
-            }
+
+            // Syntax error.
+            printf("Syntax error.\n");
+            continue;
         }
 
         // Evaluate expression.
-        scheme_element *result = scheme_evaluate(element);
-        if (result != NULL)
+        scheme_element *result = scheme_evaluate(expression, baseNamespace);
+        if (result == NULL)
         {
-            // Print evaluated result.
-            scheme_element_print(result);
+            printf("Could not evaluate: ");
+            scheme_element_print(expression);
+            putchar('\n');
         }
         else
         {
-            // We were not able to evaluate expression.
-            // Print original expresison instead.
-            scheme_element_print(element);
+            // Print evaluated result.
+            scheme_element_print(result);
+            putchar('\n');
         }
 
-        printf("\n");
-
-        scheme_element_free(element);
+        scheme_element_free(expression);
         scheme_element_free(result);
     }
 
     // Terminate.
     printf("\n");
+    scheme_element_free((scheme_element *)baseNamespace);
     scheme_close(f);
     return 0;
 }

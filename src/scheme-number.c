@@ -20,8 +20,6 @@ static void _static_init();
 /**
  * Return number symbol's type identifier.
  *
- * @param  element  Should be a Scheme number symbol.
- *
  * @return Type identifier.
  */
 static char *_vtable_get_type();
@@ -51,7 +49,7 @@ static scheme_element *_vtable_copy(scheme_element *element);
 
 /**
  * Compare number symbol to another symbol.
- * Will return 0 if either pointers are not number symbols.
+ * Will return 0 if either pointer is not a number symbol.
  *
  * @param  element  Should be a Scheme number.
  * @param  other    Other element.
