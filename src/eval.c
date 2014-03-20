@@ -10,7 +10,7 @@ scheme_element *scheme_evaluate(scheme_element *element, scheme_namespace *names
     if (element == NULL) return NULL;
 
     // If element is a symbol, resolve it.
-    if (scheme_element_is_type(element, SCHEME_SYMBOL_TYPE))
+    if (scheme_element_is_type(element, scheme_symbol_get_type()))
     {
         char *symbolValue = scheme_symbol_get_value((scheme_symbol *)element);
         scheme_element *resolvedElement = scheme_namespace_get(namespace, symbolValue);
@@ -20,17 +20,17 @@ scheme_element *scheme_evaluate(scheme_element *element, scheme_namespace *names
     }
 
     // If element is not a pair, simply return it.
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
+    if (!scheme_element_is_type(element, scheme_pair_get_type()))
         return scheme_element_copy(element);
 
     // Element is a pair.
     // Evaluate first element.
     scheme_pair *pair = (scheme_pair *)element;
-    scheme_element *first = scheme_pair_get_first(pair);;
+    scheme_element *first = scheme_pair_get_first(pair);
     first = scheme_evaluate(first, namespace);
 
     // Evaluated first element must be a procedure.
-    if (!scheme_element_is_type(first, SCHEME_PROCEDURE_TYPE))
+    if (!scheme_element_is_type(first, scheme_procedure_get_type()))
     {
         scheme_element_free(first);
 

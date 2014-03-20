@@ -15,18 +15,6 @@ struct scheme_pair {
 /**** Private function declarations ****/
 
 /**
- * Initialize static variables.
- */
-static void _static_init();
-
-/**
- * Return pair's type identifier string.
- *
- * @return Type identifier.
- */
-static char *_vtable_get_type();
-
-/**
  * Free pair. Will also free its first and second elements.
  *
  * @param  element  Should be a Scheme pair.
@@ -70,44 +58,33 @@ static int _vtable_compare(scheme_element *element, scheme_element *other);
 
 /**** Private variables ****/
 
-// Static variables for empty list.
-static struct scheme_pair _empty_pair;
-
 // Global virtual function table.
-static struct scheme_element_vtable _scheme_pair_vtable;
+static struct scheme_element_vtable _scheme_pair_vtable = {
+    .get_type = scheme_pair_get_type,
+    .free = _vtable_free,
+    .print = _vtable_print,
+    .copy = _vtable_copy,
+    .compare = _vtable_compare
+};
 
-static int _static_initialized = 0;
+// Static variables for empty list.
+static struct scheme_pair _empty_pair = {
+    .super.vtable = &_scheme_pair_vtable,
+    .first = NULL,
+    .second = NULL
+};
+
+// Global pair type.
+static struct scheme_element_type _scheme_pair_type = {
+    .super = NULL,
+    .name = "scheme_pair"
+};
+static int _scheme_pair_type_initd = 0;
 
 /**** Private function implementations ****/
 
-static void _static_init()
-{
-    if (!_static_initialized)
-    {
-        _scheme_pair_vtable.get_type = _vtable_get_type;
-        _scheme_pair_vtable.free = _vtable_free;
-        _scheme_pair_vtable.print = _vtable_print;
-        _scheme_pair_vtable.copy = _vtable_copy;
-        _scheme_pair_vtable.compare = _vtable_compare;
-
-        _empty_pair.super.vtable = &_scheme_pair_vtable;
-        _empty_pair.first = NULL;
-        _empty_pair.second = NULL;
-
-        _static_initialized = 1;
-    }
-}
-
-static char *_vtable_get_type()
-{
-    return SCHEME_PAIR_TYPE;
-}
-
 static void _vtable_free(scheme_element *element)
 {
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
-        return;
-
     scheme_pair *pair = (scheme_pair *)element;
 
     // Do not free empty pair.
@@ -120,9 +97,6 @@ static void _vtable_free(scheme_element *element)
 
 static scheme_element *_vtable_copy(scheme_element *element)
 {
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
-        return NULL;
-
     scheme_pair *pair = (scheme_pair *)element;
 
     // Do not copy the empty pair.
@@ -134,9 +108,6 @@ static scheme_element *_vtable_copy(scheme_element *element)
 
 static void _vtable_print(scheme_element *element)
 {
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE))
-        return;
-
     // Special treatment for empty pair.
     if ((scheme_pair *)element == &_empty_pair)
     {
@@ -158,7 +129,7 @@ static void _do_print(scheme_pair *pair)
 
     // If second element is a pair, print it in condensed form.
     // Else, use dot syntax.
-    if (scheme_element_is_type(pair->second, SCHEME_PAIR_TYPE))
+    if (scheme_element_is_type(pair->second, &_scheme_pair_type))
     {
         if ((scheme_pair *)pair->second != &_empty_pair)
         {
@@ -175,8 +146,7 @@ static void _do_print(scheme_pair *pair)
 
 static int _vtable_compare(scheme_element *element, scheme_element *other)
 {
-    if (!scheme_element_is_type(element, SCHEME_PAIR_TYPE)) return 0;
-    if (!scheme_element_is_type(other, SCHEME_PAIR_TYPE)) return 0;
+    if (!scheme_element_is_type(other, &_scheme_pair_type)) return 0;
 
     scheme_pair *this = (scheme_pair *)element;
     scheme_pair *that = (scheme_pair *)other;
@@ -193,8 +163,6 @@ static int _vtable_compare(scheme_element *element, scheme_element *other)
 
 scheme_pair *scheme_pair_new(scheme_element *first, scheme_element *second)
 {
-    _static_init();
-
     scheme_pair *pair;
     if ((pair = malloc(sizeof(scheme_pair))) == NULL)
         return NULL;
@@ -208,7 +176,6 @@ scheme_pair *scheme_pair_new(scheme_element *first, scheme_element *second)
 
 scheme_pair *scheme_pair_get_empty()
 {
-    _static_init();
     return &_empty_pair;
 }
 
@@ -225,4 +192,16 @@ scheme_element *scheme_pair_get_first(scheme_pair *pair)
 scheme_element *scheme_pair_get_second(scheme_pair *pair)
 {
     return pair->second;
+}
+
+scheme_element_type *scheme_pair_get_type()
+{
+    if (!_scheme_pair_type_initd)
+    {
+        _scheme_pair_type.super = scheme_element_get_base_type();
+
+        _scheme_pair_type_initd = 1;
+    }
+
+    return &_scheme_pair_type;
 }

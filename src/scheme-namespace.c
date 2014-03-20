@@ -8,18 +8,6 @@
 
 #define SCHEME_NAMESPACE_INITIAL_SIZE 32
 
-/**
- * Macro for adding a built-in Scheme procedure to a namespace.
- * Convenience macro used in scheme_namespace_base_new().
- *
- * @param  NAMESPACE  A Scheme namespace.
- * @param  PROCNAME   Built-in procedure's name in all lowercase.
- */
-#define SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(NAMESPACE, PROCNAME) \
-    char *PROCNAME##Name = scheme_procedure_get_name(scheme_procedure_##PROCNAME()); \
-    scheme_namespace_set(NAMESPACE , PROCNAME##Name, (scheme_element *)scheme_procedure_##PROCNAME()); \
-    free(PROCNAME##Name);
-
 // Struct for an element stored in namespace.
 struct _namespace_item {
     char *identifier;
@@ -36,18 +24,6 @@ struct scheme_namespace {
 };
 
 /**** Private function declarations ****/
-
-/**
- * Initialize static variables.
- */
-static void _static_init();
-
-/**
- * Return namespace's type identifier.
- *
- * @return Type identifier.
- */
-static char *_vtable_get_type();
 
 /**
  * Free Scheme namespace.
@@ -111,30 +87,22 @@ static int _namespace_item_compare(struct _namespace_item *this, struct _namespa
 /**** Private variables ****/
 
 // Global virtual function table.
-static struct scheme_element_vtable _scheme_namespace_vtable;
+static struct scheme_element_vtable _scheme_namespace_vtable = {
+    .get_type = scheme_namespace_get_type,
+    .free = _vtable_free,
+    .print = _vtable_print,
+    .copy = _vtable_copy,
+    .compare = _vtable_compare
+};
 
-static int _static_initialized = 0;
+// Static struct for namespace's type.
+static struct scheme_element_type _scheme_namespace_type = {
+    .super = NULL,
+    .name = "scheme_namespace"
+};
+static int _scheme_namespace_type_initd = 0;
 
 /**** Private function implementations ****/
-
-static void _static_init()
-{
-    if (!_static_initialized)
-    {
-        _scheme_namespace_vtable.get_type = _vtable_get_type;
-        _scheme_namespace_vtable.free = _vtable_free;
-        _scheme_namespace_vtable.print = _vtable_print;
-        _scheme_namespace_vtable.copy = _vtable_copy;
-        _scheme_namespace_vtable.compare = _vtable_compare;
-
-        _static_initialized = 1;
-    }
-}
-
-static char *_vtable_get_type()
-{
-    return SCHEME_NAMESPACE_TYPE;
-}
 
 static void _vtable_free(scheme_element *element)
 {
@@ -158,8 +126,6 @@ static void _vtable_print(scheme_element *element)
 
 static scheme_element *_vtable_copy(scheme_element *element)
 {
-    _static_init();
-
     scheme_namespace *namespace = (scheme_namespace *)element;
 
     // Allocate copy.
@@ -198,8 +164,7 @@ static scheme_element *_vtable_copy(scheme_element *element)
 
 static int _vtable_compare(scheme_element *element, scheme_element *other)
 {
-    if (!scheme_element_is_type(element, SCHEME_NAMESPACE_TYPE)) return 0;
-    if (!scheme_element_is_type(other, SCHEME_NAMESPACE_TYPE)) return 0;
+    if (!scheme_element_is_type(other, &_scheme_namespace_type)) return 0;
 
     scheme_namespace *this = (scheme_namespace *)element;
     scheme_namespace *that = (scheme_namespace *)other;
@@ -251,8 +216,6 @@ static int _namespace_item_compare(struct _namespace_item *this, struct _namespa
 
 scheme_namespace *scheme_namespace_new(scheme_namespace *superset)
 {
-    _static_init();
-
     // Allocate namespace.
     scheme_namespace *namespace;
     if ((namespace = malloc(sizeof(scheme_namespace))) == NULL)
@@ -273,13 +236,25 @@ scheme_namespace *scheme_namespace_new(scheme_namespace *superset)
     namespace->itemCount = 0;
 
     // Store superset.
-    if (superset != NULL && scheme_element_is_type((scheme_element *)superset, SCHEME_NAMESPACE_TYPE))
+    if (superset != NULL && scheme_element_is_type((scheme_element *)superset, &_scheme_namespace_type))
         namespace->superset = superset;
     else
         namespace->superset = NULL;
 
     return namespace;
 }
+
+/**
+ * Macro for adding a built-in Scheme procedure to a namespace.
+ * Used in scheme_namespace_base_new().
+ *
+ * @param  NAMESPACE  A Scheme namespace.
+ * @param  PROCNAME   Built-in procedure's name in all lowercase.
+ */
+#define SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(NAMESPACE, PROCNAME) \
+    char *PROCNAME##Name = scheme_procedure_get_name(scheme_procedure_##PROCNAME()); \
+    scheme_namespace_set(NAMESPACE , PROCNAME##Name, (scheme_element *)scheme_procedure_##PROCNAME()); \
+    free(PROCNAME##Name);
 
 scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
 {
@@ -289,15 +264,16 @@ scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, car);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, quote);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cdr);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, symbol);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, issymbol);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cons);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, equal);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, null);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isequal);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isnull);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, append);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, assoc);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cond);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, if);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, define);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, lambda);
 
     return namespace;
 }
@@ -354,4 +330,16 @@ void scheme_namespace_set(scheme_namespace *namespace, char *identifier, scheme_
 
     _namespace_item_init(namespace->items + count, identifier, element);
     namespace->itemCount += 1;
+}
+
+scheme_element_type *scheme_namespace_get_type()
+{
+    if (!_scheme_namespace_type_initd)
+    {
+        _scheme_namespace_type.super = scheme_element_get_base_type();
+
+        _scheme_namespace_type_initd = 1;
+    }
+
+    return &_scheme_namespace_type;
 }

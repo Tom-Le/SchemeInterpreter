@@ -11,9 +11,6 @@
 
 #include "scheme-element.h"
 
-// Scheme number symbol type.
-#define SCHEME_NUMBER_TYPE "SCHEME_NUMBER_TYPE"
-
 // Scheme number symbol.
 typedef struct scheme_number scheme_number;
 
@@ -34,5 +31,12 @@ scheme_number *scheme_number_new(int value);
  * @param  symbol  A number symbol.
  */
 int scheme_number_get_value(scheme_number *symbol);
+
+/**
+ * Get number symbol's type.
+ *
+ * @return Number symbol's type.
+ */
+scheme_element_type *scheme_number_get_type();
 
 #endif

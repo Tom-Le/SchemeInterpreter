@@ -6,11 +6,19 @@
 // For scheme_element struct and its virtual function table,
 // please check scheme-element-private.h.
 
+/**** Private variables ****/
+
+// Global type for generic Scheme elements.
+static struct scheme_element_type _scheme_element_type = {
+    .super = NULL,
+    .name = "scheme_element"
+};
+
 /**** Implementations of public functions from scheme-element.h ****/
 
-char *scheme_element_get_type(scheme_element *element)
+scheme_element_type *scheme_element_get_type(scheme_element *element)
 {
-    if (element == NULL) return "";
+    if (element == NULL) return NULL;
     return element->vtable->get_type();
 }
 
@@ -40,10 +48,27 @@ int scheme_element_compare(scheme_element *element, scheme_element *other)
     return element->vtable->compare(element, other);
 }
 
-int scheme_element_is_type(scheme_element *element, char *type)
+scheme_element_type *scheme_element_get_base_type()
+{
+    return &_scheme_element_type;
+}
+
+int scheme_element_is_type(scheme_element *element, scheme_element_type *type)
 {
     if (element == NULL) return 0;
-    return strcmp(scheme_element_get_type(element), type) == 0;
+
+    scheme_element_type *elementType = scheme_element_get_type(element);
+    while (elementType != NULL)
+    {
+        if (elementType == type)
+        {
+            return 1;
+        }
+
+        elementType = elementType->super;
+    }
+
+    return 0;
 }
 
 /**** Implementations of public functions from scheme-element-private.h ****/

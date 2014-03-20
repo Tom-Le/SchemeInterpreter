@@ -15,6 +15,6 @@
  *
  * @return Scheme procedure "symbol?".
  */
-scheme_procedure *scheme_procedure_symbol();
+scheme_procedure *scheme_procedure_issymbol();
 
 #endif

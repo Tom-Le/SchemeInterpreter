@@ -4,24 +4,24 @@
 #ifndef __SCHEME_ELEMENT_H__
 #define __SCHEME_ELEMENT_H__
 
-// Scheme element.
+// Typedef for Scheme element.
 typedef struct scheme_element scheme_element;
+
+// Typedef for type of a Scheme element.
+typedef struct scheme_element_type scheme_element_type;
 
 /**** Virtual functions ****/
 
 /**
- * Get Scheme element's type identifier string.
+ * Get a Scheme element's type.
  *
- * A Scheme type's identifier string is usually defined in its
- * corresponding header file.
- *
- * You should not free the returned string.
+ * You should not free the returned pointer.
  *
  * @param  element  A Scheme element.
  *
- * @return String identifying element's type.
+ * @return Element's type.
  */
-char *scheme_element_get_type(scheme_element *element);
+scheme_element_type *scheme_element_get_type(scheme_element *element);
 
 /**
  * Free previously allocated Scheme element.
@@ -64,7 +64,12 @@ scheme_element *scheme_element_copy(scheme_element *element);
  */
 int scheme_element_compare(scheme_element *element, scheme_element *other);
 
-/**** Convenience functions ****/
+/**** Other functions ****/
+
+/**
+ * Get Scheme element base type.
+ */
+scheme_element_type *scheme_element_get_base_type();
 
 /**
  * Check if Scheme element is a given type.
@@ -75,6 +80,6 @@ int scheme_element_compare(scheme_element *element, scheme_element *other);
  * @return 1 if Scheme element's type matches given identifier,
  *         0 otherwise.
  */
-int scheme_element_is_type(scheme_element *element, char *type);
+int scheme_element_is_type(scheme_element *element, scheme_element_type *type);
 
 #endif

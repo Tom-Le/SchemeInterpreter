@@ -2,11 +2,11 @@
 #include <string.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 
-#include "procedure-equal.h"
+#include "procedure-isequal.h"
 
 /**** Private variables ****/
 
@@ -61,7 +61,7 @@ static scheme_element *_equal_function(scheme_procedure *procedure, scheme_eleme
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is invalid.
     if (argCount == -1) return NULL;
@@ -93,11 +93,11 @@ static scheme_element *_equal_function(scheme_procedure *procedure, scheme_eleme
         return (scheme_element *)scheme_boolean_get_true();
     }
 
-    char *firstType = scheme_element_get_type(firstArg);
-    char *secondType = scheme_element_get_type(secondArg);
+    scheme_element_type *firstType = scheme_element_get_type(firstArg);
+    scheme_element_type *secondType = scheme_element_get_type(secondArg);
 
     // Elements are not equal if they are not of the same type.
-    if (strcmp(firstType, secondType) != 0)
+    if (firstType != secondType)
     {
         scheme_element_free(firstArg);
         scheme_element_free(secondArg);
@@ -113,15 +113,15 @@ static scheme_element *_equal_function(scheme_procedure *procedure, scheme_eleme
 
 static inline int _empty_and_false(scheme_element *first, scheme_element *second)
 {
-    return scheme_element_is_type(first, SCHEME_PAIR_TYPE)
+    return scheme_element_is_type(first, scheme_pair_get_type())
         && scheme_pair_is_empty((scheme_pair *)first)
-        && scheme_element_is_type(second, SCHEME_BOOLEAN_TYPE)
+        && scheme_element_is_type(second, scheme_boolean_get_type())
         && scheme_boolean_get_value((scheme_boolean *)second) == SCHEME_BOOLEAN_VALUE_FALSE;
 }
 
 /**** Public function implementations ****/
 
-scheme_procedure *scheme_procedure_equal()
+scheme_procedure *scheme_procedure_isequal()
 {
     if (!_proc_initd)
     {

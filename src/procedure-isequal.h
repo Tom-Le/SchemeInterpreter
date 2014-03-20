@@ -15,6 +15,6 @@
  *
  * @return Scheme procedure "equal?".
  */
-scheme_procedure *scheme_procedure_equal();
+scheme_procedure *scheme_procedure_isequal();
 
 #endif

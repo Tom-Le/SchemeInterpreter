@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
@@ -82,7 +82,7 @@ static scheme_element *_cond_function(scheme_procedure *procedure, scheme_elemen
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is valid and non-empty.
     if (argCount == -1 || argCount == 0)
@@ -94,7 +94,7 @@ static scheme_element *_cond_function(scheme_procedure *procedure, scheme_elemen
     {
         scheme_element *block = *(args + i);
 
-        if (!scheme_element_is_type(block, SCHEME_PAIR_TYPE) || scheme_pair_is_empty((scheme_pair *)block))
+        if (!scheme_element_is_type(block, scheme_pair_get_type()) || scheme_pair_is_empty((scheme_pair *)block))
         {
             free(args);
             return NULL;
@@ -103,7 +103,7 @@ static scheme_element *_cond_function(scheme_procedure *procedure, scheme_elemen
         scheme_element *condition = scheme_pair_get_first((scheme_pair *)block);
 
         if (i < argCount - 2
-                && scheme_element_is_type(condition, SCHEME_SYMBOL_TYPE)
+                && scheme_element_is_type(condition, scheme_symbol_get_type())
                 && scheme_symbol_value_equals((scheme_symbol *)condition, "else"))
         {
             free(args);
@@ -142,7 +142,7 @@ static scheme_element *_parse_condition_block(scheme_element *element, scheme_na
     scheme_pair *block = (scheme_pair *)element;
 
     int exprCount;
-    scheme_element **exprs = procedure_get_arguments((scheme_element *)block, &exprCount);
+    scheme_element **exprs = scheme_list_to_array((scheme_pair *)block, &exprCount);
 
     // Check if condition-expression block is valid and non-empty.
     if (exprCount == -1 || exprCount == 0)
@@ -150,7 +150,7 @@ static scheme_element *_parse_condition_block(scheme_element *element, scheme_na
 
     // Evaluate condition.
     scheme_element *condition = *exprs;
-    int conditionIsElse = scheme_element_is_type(condition, SCHEME_SYMBOL_TYPE)
+    int conditionIsElse = scheme_element_is_type(condition, scheme_symbol_get_type())
                        && scheme_symbol_value_equals((scheme_symbol *)condition, "else");
 
     condition = scheme_evaluate(condition, namespace);

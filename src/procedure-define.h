@@ -1,6 +1,13 @@
 /**
  * Scheme built-in procedure "define".
- * Associate an identifier with a Scheme element in current namespace.
+ *
+ * 1. Associate an identifier with a Scheme element in current namespace.
+ *    For this usage, it has the following format:
+ *          (define <identifier> <element>)
+ *
+ * 2. Define a lambda procedure.
+ *    For this usage, it has the following format:
+ *          (define (<procedure name> <arguments> ...) <expressions> ...)
  */
 
 #ifndef __SCHEME_PROCEDURE_DEFINE_H__

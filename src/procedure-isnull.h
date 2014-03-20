@@ -15,6 +15,6 @@
  *
  * @return Scheme procedure "null?".
  */
-scheme_procedure *scheme_procedure_null();
+scheme_procedure *scheme_procedure_isnull();
 
 #endif

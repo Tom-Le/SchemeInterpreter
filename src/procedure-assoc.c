@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 
 #include "procedure-assoc.h"
@@ -48,7 +48,7 @@ static scheme_element *_assoc_function(scheme_procedure *procedure, scheme_eleme
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is invalid.
     if (argCount == -1) return NULL;
@@ -74,7 +74,7 @@ static scheme_element *_assoc_function(scheme_procedure *procedure, scheme_eleme
     }
 
     // Get items in list.
-    scheme_element **pairs = procedure_get_arguments(list, &argCount);
+    scheme_element **pairs = scheme_list_to_array((scheme_pair *)list, &argCount);
 
     scheme_element *ret = (scheme_element *)scheme_boolean_get_false();
     if (argCount == -1)
@@ -90,7 +90,7 @@ static scheme_element *_assoc_function(scheme_procedure *procedure, scheme_eleme
             scheme_element *p = *(pairs + i);
 
             // Each item in list must be a pair.
-            if (!scheme_element_is_type(p, SCHEME_PAIR_TYPE))
+            if (!scheme_element_is_type(p, scheme_pair_get_type()))
             {
                 ret = NULL;
                 break;

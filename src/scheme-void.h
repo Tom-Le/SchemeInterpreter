@@ -13,9 +13,6 @@
 
 #include "scheme-element.h"
 
-// Scheme void type identifier.
-#define SCHEME_VOID_TYPE "SCHEME_VOID_TYPE"
-
 // Scheme void symbol.
 typedef struct scheme_void scheme_void;
 
@@ -32,5 +29,12 @@ typedef struct scheme_void scheme_void;
  * @return Void symbol.
  */
 scheme_element *scheme_void_get();
+
+/**
+ * Get void symbol's type.
+ *
+ * @return Void symbol's type.
+ */
+scheme_element_type *scheme_void_get_type();
 
 #endif

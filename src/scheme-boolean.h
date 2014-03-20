@@ -11,9 +11,6 @@
 
 #include "scheme-element.h"
 
-// Scheme boolean symbol type.
-#define SCHEME_BOOLEAN_TYPE "SCHEME_BOOLEAN_TYPE"
-
 // Scheme boolean symbol values.
 enum scheme_boolean_value {
     SCHEME_BOOLEAN_VALUE_TRUE,
@@ -59,5 +56,12 @@ scheme_boolean *scheme_boolean_get_false();
  * @return Symbol's value.
  */
 enum scheme_boolean_value scheme_boolean_get_value(scheme_boolean *symbol);
+
+/**
+ * Get boolean symbol's type.
+ *
+ * @return Boolean symbol's type.
+ */
+scheme_element_type *scheme_boolean_get_type();
 
 #endif

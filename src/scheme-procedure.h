@@ -11,9 +11,6 @@
 
 #include "scheme-data-types.h"
 
-// Scheme procedure type.
-#define SCHEME_PROCEDURE_TYPE "SCHEME_PROCEDURE_TYPE"
-
 // Scheme procedure.
 typedef struct scheme_procedure scheme_procedure;
 
@@ -45,5 +42,12 @@ char *scheme_procedure_get_name(scheme_procedure *proc);
  *   no function.
  */
 scheme_element *scheme_procedure_apply(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
+
+/**
+ * Get procedure's type.
+ *
+ * @return Procedure's type.
+ */
+scheme_element_type *scheme_procedure_get_type();
 
 #endif

@@ -1,7 +1,8 @@
 /**
  * Scheme pair.
  * A Scheme pair holds exactly two elements.
- * It is not mutable.
+ * A Scheme list is defined to be either the empty pair or a pair whose
+ * second element is also a list.
  *
  * This type is compatible with scheme_element.
  * You may cast any scheme_pair pointer to scheme_element and pass it to
@@ -12,9 +13,6 @@
 #define __SCHEME_PAIR_H__
 
 #include "scheme-element.h"
-
-// Scheme pair type identifier.
-#define SCHEME_PAIR_TYPE "SCHEME_PAIR_TYPE"
 
 // Scheme pair.
 typedef struct scheme_pair scheme_pair;
@@ -81,5 +79,12 @@ scheme_element *scheme_pair_get_first(scheme_pair *pair);
  * @return A Scheme element or NULL if pair is empty.
  */
 scheme_element *scheme_pair_get_second(scheme_pair *pair);
+
+/**
+ * Get pair's type.
+ *
+ * @return Pair's type.
+ */
+scheme_element_type *scheme_pair_get_type();
 
 #endif

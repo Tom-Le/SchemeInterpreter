@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
@@ -47,33 +47,79 @@ static scheme_element *_define_function(scheme_procedure *procedure, scheme_elem
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is invalid.
     if (argCount == -1) return NULL;
-    else if (argCount != 2)
+    else if (argCount < 2)
     {
         // Wrong number of arguments.
         if (args != NULL) free(args);
         return NULL;
     }
 
-    scheme_element *symbol = args[0];
-    scheme_element *symbolElement = args[1];
-    free(args);
+    scheme_element *first = args[0];
 
-    // Halt if first argument is not a symbol.
-    if (!scheme_element_is_type(symbol, SCHEME_SYMBOL_TYPE)) return NULL;
+    if (scheme_element_is_type(first, scheme_symbol_get_type()))
+    {
+        // Usage 1: Associate an identifier with a Scheme element.
+        // Must have exactly 2 arguments.
+        if (argCount != 2)
+        {
+            free(args);
+            return NULL;
+        }
 
-    // Evaluate element to be defined.
-    symbolElement = scheme_evaluate(symbolElement, namespace);
-    if (symbolElement == NULL) return NULL;
+        scheme_symbol *symbol = (scheme_symbol *)first;
+        scheme_element *symbolElement = args[1];
+        free(args);
 
-    char *symbolName = scheme_symbol_get_value((scheme_symbol *)symbol);
-    scheme_namespace_set(namespace, symbolName, symbolElement);
-    free(symbolName);
+        // Evaluate element to be defined.
+        symbolElement = scheme_evaluate(symbolElement, namespace);
+        if (symbolElement == NULL) return NULL;
 
-    return symbolElement;
+        // Store in namespace.
+        char *symbolName = scheme_symbol_get_value(symbol);
+        scheme_namespace_set(namespace, symbolName, symbolElement);
+        free(symbolName);
+
+        return symbolElement;
+    }
+    else if (scheme_element_is_type(first, scheme_pair_get_type()))
+    {
+        // Usage 2: Define a lambda function.
+        free(args);
+
+        // Element must not be the empty pair.
+        if (scheme_pair_is_empty((scheme_pair *)first))
+        {
+            return NULL;
+        }
+
+        // Get procedure's name.
+        scheme_element *nameSymbol = scheme_pair_get_first((scheme_pair *)first);
+        if (!scheme_element_is_type(nameSymbol, scheme_symbol_get_type()))
+        {
+            return NULL;
+        }
+        char *name = scheme_symbol_get_value((scheme_symbol *)nameSymbol);
+
+        // Get list of arguments.
+        scheme_element *arguments = scheme_pair_get_second((scheme_pair *)first);
+        // Get list of expressions: Second elemnet of input list.
+        scheme_element *expressions = scheme_pair_get_second((scheme_pair *)element);
+
+        scheme_lambda *result = scheme_lambda_new_from_elements(name, arguments, expressions);
+
+        // Store procedure in namespace.
+        scheme_namespace_set(namespace, name, (scheme_element *)result);
+        free(name);
+
+        return (scheme_element *)result;
+    }
+
+    // Invalid first element.
+    return NULL;
 }
 
 /**** Public function implementations ****/

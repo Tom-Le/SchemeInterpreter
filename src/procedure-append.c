@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
@@ -62,7 +62,7 @@ static scheme_element *_append_function(scheme_procedure *procedure, scheme_elem
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is invalid.
     if (argCount == -1) return NULL;
@@ -89,7 +89,7 @@ static scheme_element *_append_function(scheme_procedure *procedure, scheme_elem
 
     // First argument must resolve to a pair and second argument must
     // not resolve to NULL
-    if (!scheme_element_is_type(firstArg, SCHEME_PAIR_TYPE) || secondArg == NULL)
+    if (!scheme_element_is_type(firstArg, scheme_pair_get_type()) || secondArg == NULL)
     {
         scheme_element_free(firstArg);
         scheme_element_free(secondArg);
@@ -110,7 +110,7 @@ static scheme_element *_append_list(scheme_pair *list, scheme_element *element)
 
     // Second element of list must be a pair.
     scheme_element *second = scheme_pair_get_second(list);
-    if (!scheme_element_is_type(second, SCHEME_PAIR_TYPE))
+    if (!scheme_element_is_type(second, scheme_pair_get_type()))
         return NULL;
 
     // Append element onto second element of list.

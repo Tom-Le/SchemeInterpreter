@@ -12,21 +12,34 @@
 
 #include "scheme-element.h"
 
+/**** Struct declarations ****/
+
 // Struct for Scheme element.
 struct scheme_element;
 
+// Struct for type of a Scheme element.
+struct scheme_element_type;
+
 // Struct for a Scheme element's virtual function table.
 struct scheme_element_vtable;
+
+/**** Struct definitions ****/
 
 // Scheme element struct definition.
 struct scheme_element {
     struct scheme_element_vtable *vtable;
 };
 
+// Scheme element type struct.
+struct scheme_element_type {
+    struct scheme_element_type *super;
+    char *name;
+};
+
 // Scheme element's virtual function table struct definition.
 // For documentation on these, check matching functions in scheme-element.h.
 struct scheme_element_vtable {
-    char *(*get_type)();
+    scheme_element_type *(*get_type)();
     void (*free)(scheme_element *);
     void (*print)(scheme_element *);
     scheme_element *(*copy)(scheme_element *);

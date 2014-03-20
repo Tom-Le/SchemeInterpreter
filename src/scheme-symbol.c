@@ -15,18 +15,6 @@ struct scheme_symbol {
 /**** Private function declarations ****/
 
 /**
- * Initialize static variables.
- */
-static void _static_init();
-
-/**
- * Return symbol's type identifier.
- *
- * @return Type identifier.
- */
-static char *_vtable_get_type();
-
-/**
  * Free Scheme symbol.
  *
  * @param  element  Should be a Scheme symbol.
@@ -63,36 +51,25 @@ static int _vtable_compare(scheme_element *element, scheme_element *other);
 /**** Private variables ****/
 
 // Global virtual function table.
-static struct scheme_element_vtable _scheme_symbol_vtable;
+static struct scheme_element_vtable _scheme_symbol_vtable = {
+    .get_type = scheme_symbol_get_type,
+    .free = _vtable_free,
+    .print = _vtable_print,
+    .copy = _vtable_copy,
+    .compare = _vtable_compare
+};
 
-static int _static_initialized = 0;
+// Global Scheme symbol type.
+static struct scheme_element_type _scheme_symbol_type = {
+    .super = NULL,
+    .name = "scheme_symbol"
+};
+static int _scheme_symbol_type_initd = 0;
 
 /**** Private function implementations ****/
 
-static void _static_init()
-{
-    if (!_static_initialized)
-    {
-        _scheme_symbol_vtable.get_type = _vtable_get_type;
-        _scheme_symbol_vtable.free = _vtable_free;
-        _scheme_symbol_vtable.print = _vtable_print;
-        _scheme_symbol_vtable.copy = _vtable_copy;
-        _scheme_symbol_vtable.compare = _vtable_compare;
-
-        _static_initialized = 1;
-    }
-}
-
-static char *_vtable_get_type()
-{
-    return SCHEME_SYMBOL_TYPE;
-}
-
 void _vtable_free(scheme_element *element)
 {
-    if (!scheme_element_is_type(element, SCHEME_SYMBOL_TYPE))
-        return;
-
     scheme_symbol *symbol = (scheme_symbol *)element;
 
     free((scheme_symbol *)symbol->value);
@@ -101,26 +78,19 @@ void _vtable_free(scheme_element *element)
 
 static void _vtable_print(scheme_element *element)
 {
-    if (!scheme_element_is_type(element, SCHEME_SYMBOL_TYPE))
-        return;
-
     scheme_symbol *symbol = (scheme_symbol *)element;
     printf("%s", symbol->value);
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)
 {
-    if (!scheme_element_is_type(element, SCHEME_SYMBOL_TYPE))
-        return NULL;
-
     scheme_symbol *symbol = (scheme_symbol *)element;
     return (scheme_element *)scheme_symbol_new(symbol->value);
 }
 
 static int _vtable_compare(scheme_element *element, scheme_element *other)
 {
-    if (!scheme_element_is_type(element, SCHEME_SYMBOL_TYPE)) return 0;
-    if (!scheme_element_is_type(other, SCHEME_SYMBOL_TYPE)) return 0;
+    if (!scheme_element_is_type(other, &_scheme_symbol_type)) return 0;
 
     char *firstVal = ((scheme_symbol *)element)->value;
     char *secondVal = ((scheme_symbol *)other)->value;
@@ -132,8 +102,6 @@ static int _vtable_compare(scheme_element *element, scheme_element *other)
 
 scheme_symbol *scheme_symbol_new(char *value)
 {
-    _static_init();
-
     // Allocate symbol.
     scheme_symbol *symbol;
     if ((symbol = malloc(sizeof(scheme_symbol))) == NULL)
@@ -184,4 +152,16 @@ int scheme_symbol_value_equals(scheme_symbol *symbol, char *value)
     if (symbol == NULL || value == NULL) return 0;
 
     return strcmp(symbol->value, value) == 0;
+}
+
+scheme_element_type *scheme_symbol_get_type()
+{
+    if (!_scheme_symbol_type_initd)
+    {
+        _scheme_symbol_type.super = scheme_element_get_base_type();
+
+        _scheme_symbol_type_initd = 1;
+    }
+
+    return &_scheme_symbol_type;
 }

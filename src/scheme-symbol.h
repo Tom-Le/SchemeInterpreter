@@ -11,9 +11,6 @@
 
 #include "scheme-element.h"
 
-// Scheme symbol type.
-#define SCHEME_SYMBOL_TYPE "SCHEME_SYMBOL_TYPE"
-
 // Scheme symbol.
 typedef struct scheme_symbol scheme_symbol;
 
@@ -45,5 +42,12 @@ char *scheme_symbol_get_value(scheme_symbol *symbol);
  * @return 1 if string and symbol's values are equal, 0 otherwise.
  */
 int scheme_symbol_value_equals(scheme_symbol *symbol, char *value);
+
+/**
+ * Get Scheme symbol's type.
+ *
+ * @return Symbol's type.
+ */
+scheme_element_type *scheme_symbol_get_type();
 
 #endif

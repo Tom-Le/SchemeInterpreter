@@ -9,14 +9,15 @@
 #include "procedure-car.h"
 #include "procedure-cdr.h"
 #include "procedure-quote.h"
-#include "procedure-symbol.h"
+#include "procedure-issymbol.h"
 #include "procedure-cons.h"
-#include "procedure-equal.h"
-#include "procedure-null.h"
+#include "procedure-isequal.h"
+#include "procedure-isnull.h"
 #include "procedure-append.h"
 #include "procedure-assoc.h"
 #include "procedure-cond.h"
 #include "procedure-if.h"
 #include "procedure-define.h"
+#include "procedure-lambda.h"
 
 #endif

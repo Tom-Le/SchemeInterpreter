@@ -1,12 +1,12 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
-#include "procedure-symbol.h"
+#include "procedure-issymbol.h"
 
 /**** Private variables ****/
 
@@ -47,7 +47,7 @@ static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_elem
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is invalid.
     if (argCount == -1) return NULL;
@@ -71,7 +71,7 @@ static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_elem
     }
 
     // Check arg's type.
-    int isSymbol = scheme_element_is_type(arg, SCHEME_SYMBOL_TYPE);
+    int isSymbol = scheme_element_is_type(arg, scheme_symbol_get_type());
     scheme_element_free(arg);
 
     if (isSymbol)
@@ -82,7 +82,7 @@ static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_elem
 
 /**** Public function implementations ****/
 
-scheme_procedure *scheme_procedure_symbol()
+scheme_procedure *scheme_procedure_issymbol()
 {
     if (!_proc_initd)
     {

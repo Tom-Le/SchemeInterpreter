@@ -2,11 +2,11 @@
 #include <string.h>
 
 #include "eval.h"
-#include "procedure-utils.h"
 #include "scheme-data-types.h"
+#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 
-#include "procedure-null.h"
+#include "procedure-isnull.h"
 
 /**** Private variables ****/
 
@@ -47,7 +47,7 @@ static scheme_element *_null_function(scheme_procedure *procedure, scheme_elemen
 {
     // Get arguments.
     int argCount;
-    scheme_element **args = procedure_get_arguments(element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is invalid.
     if (argCount == -1) return NULL;
@@ -65,7 +65,7 @@ static scheme_element *_null_function(scheme_procedure *procedure, scheme_elemen
     arg = scheme_evaluate(arg, namespace);
     if (arg == NULL) return NULL;
 
-    int isEmpty = scheme_element_is_type(arg, SCHEME_PAIR_TYPE)
+    int isEmpty = scheme_element_is_type(arg, scheme_pair_get_type())
                && scheme_pair_is_empty((scheme_pair *)arg);
     scheme_element_free(arg);
 
@@ -73,7 +73,7 @@ static scheme_element *_null_function(scheme_procedure *procedure, scheme_elemen
 }
 
 /**** Public function implementation ****/
-scheme_procedure *scheme_procedure_null()
+scheme_procedure *scheme_procedure_isnull()
 {
     if (!_proc_initd)
     {

@@ -30,6 +30,9 @@ struct scheme_procedure {
     scheme_procedure_function_t function;
 };
 
+// Global virtual function table.
+struct scheme_element_vtable scheme_procedure_vtable;
+
 /**
  * Initialize a scheme_procedure struct that has already been allocated.
  *
@@ -44,7 +47,7 @@ struct scheme_procedure {
  * whenever a procedure is applied on a Scheme expression.
  *
  * @param  proc      A Scheme procedure.
- * @param  name      Its name.
+ * @param  name      Proecdure's name. If procedure is unnamed, pass NULL.
  * @param  function  A function pointer.
  */
 void scheme_procedure_init(scheme_procedure *proc, char *name, scheme_procedure_function_t function);

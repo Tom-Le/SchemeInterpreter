@@ -13,9 +13,6 @@
 
 #include "scheme-element.h"
 
-// Scheme namespace type identifier.
-#define SCHEME_NAMESPACE_TYPE "SCHEME_NAMESPACE_TYPE"
-
 // Scheme namespace.
 typedef struct scheme_namespace scheme_namespace;
 
@@ -89,5 +86,12 @@ scheme_element *scheme_namespace_get(scheme_namespace *namespace, char *identifi
  * @param  element     A Scheme element.
  */
 void scheme_namespace_set(scheme_namespace *namespace, char *identifier, scheme_element *element);
+
+/**
+ * Get namespace's type.
+ *
+ * @return Namespace's type.
+ */
+scheme_element_type *scheme_namespace_get_type();
 
 #endif
