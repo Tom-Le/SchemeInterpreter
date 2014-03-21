@@ -260,7 +260,6 @@ scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
 {
     scheme_namespace *namespace = scheme_namespace_new(superset);
 
-    // Add built-in procedures.
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, car);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, quote);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cdr);
@@ -274,6 +273,8 @@ scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, if);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, define);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, lambda);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, islist);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isprocedure);
 
     return namespace;
 }

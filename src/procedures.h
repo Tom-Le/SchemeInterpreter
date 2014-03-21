@@ -19,5 +19,7 @@
 #include "procedure-if.h"
 #include "procedure-define.h"
 #include "procedure-lambda.h"
+#include "procedure-islist.h"
+#include "procedure-isprocedure.h"
 
 #endif
