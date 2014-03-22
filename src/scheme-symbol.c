@@ -79,7 +79,7 @@ void _vtable_free(scheme_element *element)
 static void _vtable_print(scheme_element *element)
 {
     scheme_symbol *symbol = (scheme_symbol *)element;
-    printf("%s", symbol->value);
+    printf("%s\n", symbol->value);
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)

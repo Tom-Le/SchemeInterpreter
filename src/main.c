@@ -47,13 +47,11 @@ int main(int argc, char *argv[])
         {
             printf("Could not evaluate: ");
             scheme_element_print(expression);
-            putchar('\n');
         }
         else
         {
             // Print evaluated result.
             scheme_element_print(result);
-            putchar('\n');
         }
 
         scheme_element_free(expression);
@@ -61,7 +59,6 @@ int main(int argc, char *argv[])
     }
 
     // Terminate.
-    printf("\n");
     scheme_element_free((scheme_element *)baseNamespace);
     scheme_close(f);
     return 0;

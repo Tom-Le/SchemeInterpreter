@@ -120,6 +120,7 @@ static void _vtable_print(scheme_element *element)
     putchar('(');
     _do_print(pair);
     putchar(')');
+    putchar('\n');
 }
 
 static void _do_print(scheme_pair *pair)
