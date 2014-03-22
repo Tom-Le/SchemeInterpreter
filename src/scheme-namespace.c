@@ -256,10 +256,22 @@ scheme_namespace *scheme_namespace_new(scheme_namespace *superset)
     scheme_namespace_set(NAMESPACE , PROCNAME##Name, (scheme_element *)scheme_procedure_##PROCNAME()); \
     free(PROCNAME##Name);
 
+/**
+ * Macro for adding a built-in procedure to a namespace under a different name.
+ * Used in scheme_namespace_base_new().
+ *
+ * @param  NAMESPACE  A Scheme namespace.
+ * @param  PROCNAME   Built-in procedure's name in all lowercase.
+ * @param  ALTNAME    Alternative name.
+ */
+#define SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(NAMESPACE, PROCNAME, ALTNAME) \
+    scheme_namespace_set(NAMESPACE, ALTNAME, (scheme_element *)scheme_procedure_##PROCNAME());
+
 scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
 {
     scheme_namespace *namespace = scheme_namespace_new(superset);
 
+    // Add built-in procedures.
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, car);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, quote);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cdr);
@@ -275,6 +287,26 @@ scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, lambda);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, islist);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isprocedure);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, add);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, subtract);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, multiply);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, and);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, or);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, greater);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, less);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, greaterequal);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, lessequal);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isnumber);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, list);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cadr);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, caddr);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cadddr);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, caddddr);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, last);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, length);
+
+    // Alternative namings for built-in procedures.
+    SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(namespace, isnull, "not");
 
     return namespace;
 }

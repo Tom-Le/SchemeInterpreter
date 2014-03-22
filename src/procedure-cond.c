@@ -174,9 +174,6 @@ static scheme_element *_parse_condition_block(scheme_element *element, scheme_na
             return NULL;
         }
 
-        if (condition == (scheme_element *)scheme_boolean_get_false())
-            return (scheme_element *)scheme_boolean_get_false();
-
         return condition;
     }
     else

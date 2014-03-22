@@ -6,32 +6,30 @@
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
-#include "procedure-issymbol.h"
+#include "procedure-length.h"
 
 /**** Private variables ****/
 
-static scheme_procedure _procedure_symbol;
+static scheme_procedure _procedure_length;
 static struct scheme_element_vtable _procedure_vtable;
 static int _proc_initd = 0;
 
 /**** Private function declarations ****/
 
 /**
- * Implementation of Scheme procedure "symbol?".
- * Check if given argument is a symbol.
+ * Implementation of Scheme procedure "length".
  *
  * Will return NULL if:
- * - Supplied element is not in the format (<element>).
+ * - Supplied element is not a pair in the format: (<list>)
  * - Out of memory.
  *
  * @param  procedure  Procedure that refers to this function.
  * @param  element    A Scheme element.
  * @param  namespace  Active namespace.
  *
- * @return Scheme boolean #t if argument is a symbol, #f if not,
- *         or NULL if an error occurred.
+ * @return Length of list, or NULL if an error occurs.
  */
-static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
+static scheme_element *_length_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
 /**
  * Prevent freeing this statically allocated Scheme procedure.
@@ -43,7 +41,7 @@ static void _procedure_free(scheme_element *element) {}
 
 /**** Private function implementations ****/
 
-static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
+static scheme_element *_length_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
     // Get arguments.
     int argCount;
@@ -58,42 +56,49 @@ static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_elem
         return NULL;
     }
 
-    scheme_element *arg = *args;
+    scheme_element *arg = args[0];
     free(args);
 
     // Evaluate argument.
     arg = scheme_evaluate(arg, namespace);
+    if (arg == NULL) return NULL;
 
-    if (arg == NULL)
+    // Evaluated result must be a pair.
+    if (!scheme_element_is_type(arg, scheme_pair_get_type()))
     {
-        // Could not evaluate argument.
+        scheme_element_free(arg);
         return NULL;
     }
 
-    // Check arg's type.
-    int isSymbol = scheme_element_is_type(arg, scheme_symbol_get_type());
-    scheme_element_free(arg);
+    // Get every item in evaluated result and verify that it is a non-empty list.
+    int itemCount;
+    scheme_element **items = scheme_list_to_array((scheme_pair *)arg, &itemCount);
+    if (itemCount == -1)
+    {
+        scheme_element_free(arg);
+        return NULL;
+    }
 
-    if (isSymbol)
-        return (scheme_element *)scheme_boolean_get_true();
-    else
-        return (scheme_element *)scheme_boolean_get_false();
+    free(items);
+    scheme_element_free(arg);
+    return (scheme_element *)scheme_number_new(itemCount);
 }
 
 /**** Public function implementations ****/
 
-scheme_procedure *scheme_procedure_issymbol()
+scheme_procedure *scheme_procedure_length()
 {
     if (!_proc_initd)
     {
-        scheme_procedure_init(&_procedure_symbol, PROCEDURE_ISSYMBOL_NAME, _symbol_function);
+        scheme_procedure_init(&_procedure_length, PROCEDURE_LENGTH_NAME, _length_function);
 
-        scheme_element_vtable_clone(&_procedure_vtable, _procedure_symbol.super.vtable);
+        scheme_element_vtable_clone(&_procedure_vtable, _procedure_length.super.vtable);
         _procedure_vtable.free = _procedure_free;
-        _procedure_symbol.super.vtable = &_procedure_vtable;
+        _procedure_length.super.vtable = &_procedure_vtable;
 
         _proc_initd = 1;
     }
 
-    return &_procedure_symbol;
+    return &_procedure_length;
 }
+

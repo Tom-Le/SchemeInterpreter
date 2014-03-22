@@ -20,7 +20,9 @@ int scheme_pair_is_list(scheme_pair *list);
  * Convert a Scheme list to an array of Scheme elements in the list.
  *
  * Caller is responsible for freeing returned pointer with free().
- * This will not free elements referenced by the pointer.
+ * This will not free elements referenced by the pointer, which are
+ * still stored in the given Scheme list. To free those elements,
+ * pass the list to scheme_element_free().
  *
  * Will return NULL if list is empty, with count set to 0.
  *

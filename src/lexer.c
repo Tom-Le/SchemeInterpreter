@@ -158,7 +158,7 @@ char *scheme_get_token(scheme_file *file, scheme_token_type *type)
         return NULL;
     }
 
-    // Return token.
+    // Allocate return token.
     // For convenience, this is assumed to be at least 4 chars long.
     char *token = malloc(sizeof(char) * SCHEME_RETURN_TOKEN_INITIAL_SIZE);
     if (token == NULL)
@@ -233,7 +233,28 @@ char *scheme_get_token(scheme_file *file, scheme_token_type *type)
         }
     }
 
-    // Case 4: Symbol or number.
+    // Case 4: '-', could be by itself, could be a negative number,
+    // or a symbol that happens to start with a dash.
+    if (c == '-')
+    {
+        c = _next_character(file);
+
+        if (isspace(c))
+        {
+            // '-' by itself.
+            strcpy(token, "-");
+            if (type != NULL) *type = SCHEME_TOKEN_TYPE_SYMBOL;
+            return token;
+        }
+        else
+        {
+            // Rewind.
+            --file->bufferPosition;
+            c = '-';
+        }
+    }
+
+    // Case 5: Symbol or number.
     int isNumber = 1;  // Flag to distinguish numbers from symbols.
     int count = 0;     // Character count.
 
@@ -243,7 +264,13 @@ char *scheme_get_token(scheme_file *file, scheme_token_type *type)
     {
         // Check if token is a number.
         if (isNumber && !isdigit(c))
-            isNumber = 0;
+        {
+            // If token's first character is '-', still treat it as a number.
+            if (count != 0 || c != '-')
+            {
+                isNumber = 0;
+            }
+        }
 
         token[count] = c;
 

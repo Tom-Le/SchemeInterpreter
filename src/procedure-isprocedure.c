@@ -29,7 +29,7 @@ static int _proc_initd = 0;
  * @param  namespace  Active namespace.
  *
  * @return Scheme boolean #t if argument is a procedure, #f if not,
- *         or NULL if an error occurred.
+ *         or NULL if an error occurs.
  */
 static scheme_element *_isprocedure_function(scheme_procedure *procedure,
                                              scheme_element *element,

@@ -72,13 +72,16 @@ int scheme_element_compare(scheme_element *element, scheme_element *other);
 scheme_element_type *scheme_element_get_base_type();
 
 /**
- * Check if Scheme element is a given type.
+ * Check if a Scheme element's type is compatible with the given type.
+ *
+ * If a Scheme element's type is compatible with a given type, the element
+ * can be passed as a parameter to any function that expects a parameter
+ * of the given type.
  *
  * @param  element  A Scheme element.
- * @param  type     A type identifier.
+ * @param  type     A type.
  *
- * @return 1 if Scheme element's type matches given identifier,
- *         0 otherwise.
+ * @return 1 if Scheme element's type is compatible, 0 otherwise.
  */
 int scheme_element_is_type(scheme_element *element, scheme_element_type *type);
 

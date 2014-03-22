@@ -59,8 +59,8 @@ static scheme_element *_assoc_function(scheme_procedure *procedure, scheme_eleme
         return NULL;
     }
 
-    scheme_element *key = *args;
-    scheme_element *list = *(args + 1);
+    scheme_element *key = args[0];
+    scheme_element *list = args[1];
     free(args);
 
     // Evaluate arguments.

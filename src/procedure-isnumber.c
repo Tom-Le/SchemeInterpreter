@@ -6,19 +6,19 @@
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
-#include "procedure-issymbol.h"
+#include "procedure-isnumber.h"
 
 /**** Private variables ****/
 
-static scheme_procedure _procedure_symbol;
+static scheme_procedure _procedure_number;
 static struct scheme_element_vtable _procedure_vtable;
 static int _proc_initd = 0;
 
 /**** Private function declarations ****/
 
 /**
- * Implementation of Scheme procedure "symbol?".
- * Check if given argument is a symbol.
+ * Implementation of Scheme procedure "number?".
+ * Check if given argument is a number.
  *
  * Will return NULL if:
  * - Supplied element is not in the format (<element>).
@@ -28,10 +28,10 @@ static int _proc_initd = 0;
  * @param  element    A Scheme element.
  * @param  namespace  Active namespace.
  *
- * @return Scheme boolean #t if argument is a symbol, #f if not,
+ * @return Scheme boolean #t if argument is a number, #f if not,
  *         or NULL if an error occurred.
  */
-static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
+static scheme_element *_number_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
 /**
  * Prevent freeing this statically allocated Scheme procedure.
@@ -43,7 +43,7 @@ static void _procedure_free(scheme_element *element) {}
 
 /**** Private function implementations ****/
 
-static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
+static scheme_element *_number_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
     // Get arguments.
     int argCount;
@@ -71,10 +71,10 @@ static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_elem
     }
 
     // Check arg's type.
-    int isSymbol = scheme_element_is_type(arg, scheme_symbol_get_type());
+    int isnumber = scheme_element_is_type(arg, scheme_number_get_type());
     scheme_element_free(arg);
 
-    if (isSymbol)
+    if (isnumber)
         return (scheme_element *)scheme_boolean_get_true();
     else
         return (scheme_element *)scheme_boolean_get_false();
@@ -82,18 +82,19 @@ static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_elem
 
 /**** Public function implementations ****/
 
-scheme_procedure *scheme_procedure_issymbol()
+scheme_procedure *scheme_procedure_isnumber()
 {
     if (!_proc_initd)
     {
-        scheme_procedure_init(&_procedure_symbol, PROCEDURE_ISSYMBOL_NAME, _symbol_function);
+        scheme_procedure_init(&_procedure_number, PROCEDURE_ISNUMBER_NAME, _number_function);
 
-        scheme_element_vtable_clone(&_procedure_vtable, _procedure_symbol.super.vtable);
+        scheme_element_vtable_clone(&_procedure_vtable, _procedure_number.super.vtable);
         _procedure_vtable.free = _procedure_free;
-        _procedure_symbol.super.vtable = &_procedure_vtable;
+        _procedure_number.super.vtable = &_procedure_vtable;
 
         _proc_initd = 1;
     }
 
-    return &_procedure_symbol;
+    return &_procedure_number;
 }
+

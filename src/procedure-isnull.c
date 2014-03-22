@@ -18,7 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "null?".
- * Check if a Scheme element is the empty pair.
+ * Check if a Scheme element is the empty pair or #f.
  *
  * Will return NULL if:
  * - Supplied element is not a pair in the format (<element>).
@@ -28,8 +28,8 @@ static int _proc_initd = 0;
  * @param  element    A Scheme element.
  * @param  namespace  Active namespace.
  *
- * @return Scheme boolean #t if two elements are equal, #f if not, or NULL
- *         if an error occurs.
+ * @return Scheme boolean #t if element is the empty pair or #f,
+ *         or NULL if an error occurs.
  */
 static scheme_element *_null_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
@@ -65,8 +65,7 @@ static scheme_element *_null_function(scheme_procedure *procedure, scheme_elemen
     arg = scheme_evaluate(arg, namespace);
     if (arg == NULL) return NULL;
 
-    int isEmpty = scheme_element_is_type(arg, scheme_pair_get_type())
-               && scheme_pair_is_empty((scheme_pair *)arg);
+    int isEmpty = scheme_element_compare(arg, (scheme_element *)scheme_pair_get_empty());
     scheme_element_free(arg);
 
     return (scheme_element *)(isEmpty ? scheme_boolean_get_true() : scheme_boolean_get_false());

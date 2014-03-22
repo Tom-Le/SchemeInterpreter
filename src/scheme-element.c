@@ -1,10 +1,27 @@
 #include <string.h>
 
+#include "scheme-data-types.h"
 #include "scheme-element.h"
 #include "scheme-element-private.h"
 
 // For scheme_element struct and its virtual function table,
 // please check scheme-element-private.h.
+
+/**** Private function declarations ****/
+
+/**
+ * Check if first argument is the empty pair and second argument
+ * is the #f symbol.
+ *
+ * Convenience function used in scheme_element_compare().
+ *
+ * @param  first   A Scheme element.
+ * @param  second  A Scheme element.
+ *
+ * @return 1 if first argument is the empty pair and second argument
+ *         is the #f symbol, 0 otherwise.
+ */
+static inline int _empty_and_false(scheme_element *first, scheme_element *second);
 
 /**** Private variables ****/
 
@@ -13,6 +30,14 @@ static struct scheme_element_type _scheme_element_type = {
     .super = NULL,
     .name = "scheme_element"
 };
+
+static inline int _empty_and_false(scheme_element *first, scheme_element *second)
+{
+    return scheme_element_is_type(first, scheme_pair_get_type())
+        && scheme_pair_is_empty((scheme_pair *)first)
+        && scheme_element_is_type(second, scheme_boolean_get_type())
+        && scheme_boolean_get_value((scheme_boolean *)second) == SCHEME_BOOLEAN_VALUE_FALSE;
+}
 
 /**** Implementations of public functions from scheme-element.h ****/
 
@@ -44,6 +69,10 @@ int scheme_element_compare(scheme_element *element, scheme_element *other)
 {
     if (element == NULL) return 0;
     if (other == NULL) return 0;
+
+    // Special case: If one element is #f and the other is '(), consider them equal.
+    if (_empty_and_false(element, other) || _empty_and_false(other, element))
+        return 1;
 
     return element->vtable->compare(element, other);
 }

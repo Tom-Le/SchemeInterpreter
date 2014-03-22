@@ -26,16 +26,15 @@ static int _proc_initd = 0;
  * expressions is evaluated and returned. Otherwise, second expression is
  * evaluated and returned.
  *
- * Will return void symbol if:
- * - Supplied element is not a list with exactly three arguments as described
- *   above.
+ * Will return NULL if:
+ * - Supplied element is not a list with exactly three arguments as described above.
  * - Out of memory.
  *
  * @param  procedure  Procedure that refers to this function.
  * @param  element    A Scheme element.
  * @param  namespace  Active namespace.
  *
- * @return Result or void symbol as described above.
+ * @return Result or NULL as described above.
  */
 static scheme_element *_if_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
@@ -51,49 +50,55 @@ static void _procedure_free(scheme_element *element) {}
 
 static scheme_element *_if_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
+    // Evaluate each argument.
+    scheme_pair *evaluatedList = scheme_list_evaluated((scheme_pair *)element, namespace);
+    if (evaluatedList == NULL)
+    {
+        return NULL;
+    }
+
     // Get arguments.
     int argCount;
-    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
+    scheme_element **args = scheme_list_to_array(evaluatedList, &argCount);
 
     // Check if argument list is valid and that we are given exactly 3 arguments.
-    if (argCount == -1) return scheme_void_get();
+    if (argCount == -1)
+    {
+        scheme_element_free((scheme_element *)evaluatedList);
+        return NULL;
+    }
     else if (argCount != 3)
     {
-        if (args != NULL) free(args);
-        return scheme_void_get();
+        free(args);
+        scheme_element_free((scheme_element *)evaluatedList);
+        return NULL;
     }
 
-    scheme_element *condition = *args;
-    scheme_element *thenExpr = *(args + 1);
-    scheme_element *elseExpr = *(args + 2);
+    scheme_element *condition = args[0];
+    scheme_element *thenExpr = args[1];
+    scheme_element *elseExpr = args[2];
     free(args);
 
-    // Evaluate expressions.
-    condition = scheme_evaluate(condition, namespace);
-    thenExpr = scheme_evaluate(thenExpr, namespace);
-    elseExpr = scheme_evaluate(elseExpr, namespace);
-
-    // Make sure we were able to evaluate all three of them.
-    if (condition == scheme_void_get() || thenExpr == scheme_void_get() || elseExpr == scheme_void_get())
+    // Make sure we were able to evaluate all three arguments.
+    if (condition == NULL || thenExpr == NULL || elseExpr == NULL)
     {
-        scheme_element_free(condition);
-        scheme_element_free(thenExpr);
-        scheme_element_free(elseExpr);
-        return scheme_void_get();
+        scheme_element_free((scheme_element *)evaluatedList);
+        return NULL;
     }
 
-    if (condition == (scheme_element *)scheme_boolean_get_false())
+    // Determine result based on condition.
+    scheme_element *result;
+    if (scheme_element_compare(condition, (scheme_element *)scheme_boolean_get_false()))
     {
-        scheme_element_free(condition);
-        scheme_element_free(thenExpr);
-        return elseExpr;
+        result = scheme_element_copy(elseExpr);
     }
     else
     {
-        scheme_element_free(condition);
-        scheme_element_free(elseExpr);
-        return thenExpr;
+        result = scheme_element_copy(thenExpr);
     }
+
+    scheme_element_free((scheme_element *)evaluatedList);
+    return result;
 }
 
 /**** Public function implementation ****/

@@ -41,34 +41,32 @@ static scheme_element *_equal_function(scheme_procedure *procedure, scheme_eleme
  */
 static void _procedure_free(scheme_element *element) {}
 
-/**
- * Check if first argument is the empty pair and second argument
- * is the #f symbol.
- *
- * Convenience function used in _equal_function().
- *
- * @param  first   A Scheme element.
- * @param  second  A Scheme element.
- *
- * @return 1 if first argument is the empty pair and second argument
- *         is the #f symbol, 0 otherwise.
- */
-static inline int _empty_and_false(scheme_element *first, scheme_element *second);
-
 /**** Private function implementations ****/
 
 static scheme_element *_equal_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
+    // Evaluate each argument.
+    scheme_pair *evaluatedList = scheme_list_evaluated((scheme_pair *)element, namespace);
+    if (evaluatedList == NULL)
+    {
+        return NULL;
+    }
+
     // Get arguments.
     int argCount;
-    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
+    scheme_element **args = scheme_list_to_array(evaluatedList, &argCount);
 
     // Check if argument list is invalid.
-    if (argCount == -1) return NULL;
+    if (argCount == -1)
+    {
+        scheme_element_free((scheme_element *)evaluatedList);
+        return NULL;
+    }
     else if (argCount != 2)
     {
         // Wrong number of arguments.
-        if (args != NULL) free(args);
+        free(args);
+        scheme_element_free((scheme_element *)evaluatedList);
         return NULL;
     }
 
@@ -76,47 +74,10 @@ static scheme_element *_equal_function(scheme_procedure *procedure, scheme_eleme
     scheme_element *secondArg = *(args+1);
     free(args);
 
-    // Evaluate arguments.
-    firstArg = scheme_evaluate(firstArg, namespace);
-    secondArg = scheme_evaluate(secondArg, namespace);
-    if (firstArg == NULL || secondArg == NULL)
-    {
-        scheme_element_free(firstArg);
-        scheme_element_free(secondArg);
-        return NULL;
-    }
-
-    // Special treatment: #f == ()
-    if (_empty_and_false(firstArg, secondArg) || _empty_and_false(secondArg, firstArg))
-    {
-        // No need to free either of them.
-        return (scheme_element *)scheme_boolean_get_true();
-    }
-
-    scheme_element_type *firstType = scheme_element_get_type(firstArg);
-    scheme_element_type *secondType = scheme_element_get_type(secondArg);
-
-    // Elements are not equal if they are not of the same type.
-    if (firstType != secondType)
-    {
-        scheme_element_free(firstArg);
-        scheme_element_free(secondArg);
-        return (scheme_element *)scheme_boolean_get_false();
-    }
-
     int comparison = scheme_element_compare(firstArg, secondArg);
-    scheme_element_free(firstArg);
-    scheme_element_free(secondArg);
+    scheme_element_free((scheme_element *)evaluatedList);
 
     return (scheme_element *)(comparison ? scheme_boolean_get_true() : scheme_boolean_get_false());
-}
-
-static inline int _empty_and_false(scheme_element *first, scheme_element *second)
-{
-    return scheme_element_is_type(first, scheme_pair_get_type())
-        && scheme_pair_is_empty((scheme_pair *)first)
-        && scheme_element_is_type(second, scheme_boolean_get_type())
-        && scheme_boolean_get_value((scheme_boolean *)second) == SCHEME_BOOLEAN_VALUE_FALSE;
 }
 
 /**** Public function implementations ****/
