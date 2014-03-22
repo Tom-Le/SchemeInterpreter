@@ -4,6 +4,10 @@
 #include "scheme-data-types.h"
 #include "parser.h"
 #include "eval.h"
+#include "main.h"
+
+int g_SchemeProgramTerminationFlag = 0;
+int g_SchemeProgramTerminationCode = 0;
 
 /**
  * Start an interactive Scheme prompt.
@@ -14,6 +18,7 @@
 int main(int argc, char *argv[])
 {
     printf("Experimental Scheme parser.\n");
+    printf("To exit, type \"(exit)\" or the EOF character.\n\n");
 
     // Parse expressions from stdin until terminated.
     scheme_file *f = scheme_open_file(stdin);
@@ -56,10 +61,16 @@ int main(int argc, char *argv[])
 
         scheme_element_free(expression);
         scheme_element_free(result);
+
+        // Check termination flag.
+        if (g_SchemeProgramTerminationFlag)
+        {
+            break;
+        }
     }
 
     // Terminate.
     scheme_element_free((scheme_element *)baseNamespace);
     scheme_close(f);
-    return 0;
+    return g_SchemeProgramTerminationCode;
 }

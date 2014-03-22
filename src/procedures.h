@@ -38,5 +38,6 @@
 #include "procedure-caddddr.h"
 #include "procedure-last.h"
 #include "procedure-length.h"
+#include "procedure-exit.h"
 
 #endif
