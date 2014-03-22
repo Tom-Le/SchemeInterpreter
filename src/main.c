@@ -39,7 +39,10 @@ int main(int argc, char *argv[])
         {
             // End of file.
             if (parserError == SCHEME_PARSER_ERROR_EOF)
+            {
+                putchar('\n');
                 break;
+            }
 
             // Syntax error.
             printf("Syntax error.\n");
@@ -58,7 +61,11 @@ int main(int argc, char *argv[])
         {
             // Print evaluated result.
             scheme_element_print(result);
-            putchar('\n');
+
+            if (!scheme_element_is_type(result, scheme_void_get_type()))
+            {
+                putchar('\n');
+            }
         }
 
         scheme_element_free(expression);
@@ -72,7 +79,6 @@ int main(int argc, char *argv[])
     }
 
     // Terminate.
-    printf("\n");
     scheme_element_free((scheme_element *)baseNamespace);
     scheme_close(f);
     return g_SchemeProgramTerminationCode;
