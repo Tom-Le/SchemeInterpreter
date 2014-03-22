@@ -86,9 +86,9 @@ static void _vtable_print(scheme_element *element)
     scheme_boolean *symbol = (scheme_boolean *)element;
 
     if (symbol->value == SCHEME_BOOLEAN_VALUE_TRUE)
-        printf("#t\n");
+        printf("#t");
     else
-        printf("#f\n");
+        printf("#f");
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)

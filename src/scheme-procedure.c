@@ -76,9 +76,9 @@ static void _vtable_print(scheme_element *element)
     scheme_procedure *procedure = (scheme_procedure *)element;
 
     if (procedure->name != NULL)
-        printf("#<procedure:%s>\n", procedure->name);
+        printf("#<procedure:%s>", procedure->name);
     else
-        printf("#<procedure>\n");
+        printf("#<procedure>");
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)

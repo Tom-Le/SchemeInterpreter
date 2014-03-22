@@ -121,7 +121,7 @@ static void _vtable_free(scheme_element *element)
 
 static void _vtable_print(scheme_element *element)
 {
-    printf("#<namespace>\n");
+    printf("#<namespace>");
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)
@@ -308,6 +308,7 @@ scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
 
     // Alternative namings for built-in procedures.
     SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(namespace, isnull, "not");
+    SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(namespace, isequal, "=");
 
     return namespace;
 }
