@@ -10,7 +10,7 @@
 
 /**** Private variables ****/
 
-static scheme_procedure _procedure_number;
+static scheme_procedure _procedure_isnumber;
 static struct scheme_element_vtable _procedure_vtable;
 static int _proc_initd = 0;
 
@@ -18,6 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "number?".
+ *
  * Check if given argument is a number.
  *
  * Will return NULL if:
@@ -31,7 +32,7 @@ static int _proc_initd = 0;
  * @return Scheme boolean #t if argument is a number, #f if not,
  *         or NULL if an error occurred.
  */
-static scheme_element *_number_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
+static scheme_element *_isnumber_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
 /**
  * Prevent freeing this statically allocated Scheme procedure.
@@ -43,7 +44,7 @@ static void _procedure_free(scheme_element *element) {}
 
 /**** Private function implementations ****/
 
-static scheme_element *_number_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
+static scheme_element *_isnumber_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
     // Get arguments.
     int argCount;
@@ -71,10 +72,10 @@ static scheme_element *_number_function(scheme_procedure *procedure, scheme_elem
     }
 
     // Check arg's type.
-    int isnumber = scheme_element_is_type(arg, scheme_number_get_type());
+    int isNumber = scheme_element_is_type(arg, scheme_number_get_type());
     scheme_element_free(arg);
 
-    if (isnumber)
+    if (isNumber)
         return (scheme_element *)scheme_boolean_get_true();
     else
         return (scheme_element *)scheme_boolean_get_false();
@@ -86,15 +87,15 @@ scheme_procedure *scheme_procedure_isnumber()
 {
     if (!_proc_initd)
     {
-        scheme_procedure_init(&_procedure_number, PROCEDURE_ISNUMBER_NAME, _number_function);
+        scheme_procedure_init(&_procedure_isnumber, PROCEDURE_ISNUMBER_NAME, _isnumber_function);
 
-        scheme_element_vtable_clone(&_procedure_vtable, _procedure_number.super.vtable);
+        scheme_element_vtable_clone(&_procedure_vtable, _procedure_isnumber.super.vtable);
         _procedure_vtable.free = _procedure_free;
-        _procedure_number.super.vtable = &_procedure_vtable;
+        _procedure_isnumber.super.vtable = &_procedure_vtable;
 
         _proc_initd = 1;
     }
 
-    return &_procedure_number;
+    return &_procedure_isnumber;
 }
 

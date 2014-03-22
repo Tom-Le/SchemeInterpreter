@@ -18,7 +18,8 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "equal?".
- * Compare two Scheme elements given as argument.
+ *
+ * Compare two Scheme elements.
  *
  * Will return NULL if:
  * - Supplied element is not a pair in the format (<element> <element>).
@@ -70,8 +71,8 @@ static scheme_element *_equal_function(scheme_procedure *procedure, scheme_eleme
         return NULL;
     }
 
-    scheme_element *firstArg = *(args);
-    scheme_element *secondArg = *(args+1);
+    scheme_element *firstArg = args[0];
+    scheme_element *secondArg = args[1];
     free(args);
 
     int comparison = scheme_element_compare(firstArg, secondArg);

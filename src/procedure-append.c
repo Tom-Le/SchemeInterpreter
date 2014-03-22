@@ -18,6 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "append".
+ *
  * Return a new list with the given element appended onto the end of the
  * given list.
  *
@@ -73,8 +74,8 @@ static scheme_element *_append_function(scheme_procedure *procedure, scheme_elem
         return NULL;
     }
 
-    scheme_element *firstArg = *args;
-    scheme_element *secondArg = *(args + 1);
+    scheme_element *firstArg = args[0];
+    scheme_element *secondArg = args[1];
     free(args);
 
     // Evaluate arguments.
@@ -87,9 +88,8 @@ static scheme_element *_append_function(scheme_procedure *procedure, scheme_elem
         return NULL;
     }
 
-    // First argument must resolve to a pair and second argument must
-    // not resolve to NULL
-    if (!scheme_element_is_type(firstArg, scheme_pair_get_type()) || secondArg == NULL)
+    // First argument must resolve to a pair.
+    if (!scheme_element_is_type(firstArg, scheme_pair_get_type()))
     {
         scheme_element_free(firstArg);
         scheme_element_free(secondArg);

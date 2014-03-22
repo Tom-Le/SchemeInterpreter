@@ -2,7 +2,6 @@
  * Scheme built-in procedure "-".
  *
  * Given a number, negate it.
- *
  * Given a list of numbers, return the first number subtracted by the rest.
  */
 

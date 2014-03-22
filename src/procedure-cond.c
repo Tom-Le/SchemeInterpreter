@@ -25,14 +25,15 @@ static int _proc_initd = 0;
  * evaluate to #f or is the symbol "else".
  *
  * If there is no <expression>, returns <condition> unless <condition> is the symbol
- * "else", in which case we return NULL.
+ * "else", in which case return NULL.
  *
- * Block with "else" for condition must be the last block.
+ * Block with "else" for condition must be the last block, otherwise return NULL.
  *
- * Will return NULL if:
+ * If all conditions evaluate to #f, return void symbol.
+ *
+ * In summary, will return NULL if:
  * - Supplied element is not a pair in the format of: ((<condition> [<expression>]) ...).
  * - Any of the condition-expression block is not a list in the given format.
- * - All <condition> expressions evaluate to #f.
  * - There exists a block without an <expression> whose <condition> is "else".
  * - A block with condition "else" is not the last block.
  * - Out of memory.

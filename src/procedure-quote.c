@@ -18,7 +18,8 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "quote".
- * Return the supplied argument as-is.
+ *
+ * Return the given argument as-is.
  *
  * Will return NULL if:
  * - Supplied element is not in the format (<element>).

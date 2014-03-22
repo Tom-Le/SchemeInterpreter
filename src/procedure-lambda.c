@@ -20,7 +20,9 @@ static int _proc_initd = 0;
  *
  * Will return NULL if:
  * - Supplied element is not a list in the format:
- *       ((<arguments> ...) <expression> ...)
+ *       ((<arguments> ... [. <rest argument>]) <expression> ...)
+     or:
+         (<rest argument> <expression> ...)
  * - Out of memory.
  *
  * @param  procedure  Procedure that refers to this function.

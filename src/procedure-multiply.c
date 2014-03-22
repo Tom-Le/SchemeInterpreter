@@ -17,7 +17,8 @@ static int _proc_initd = 0;
 /**** Private function declarations ****/
 
 /**
- * Implementation of Scheme procedure "+".
+ * Implementation of Scheme procedure "*".
+ *
  * Compute the sum of a list of numbers.
  *
  * Will return NULL if:

@@ -19,7 +19,7 @@ static int _proc_initd = 0;
  *
  * Will return NULL if:
  * - Supplied element is not a pair in the format: (<pair>)
- * - Argument <pair> is improperly formatted.
+ * - Argument <pair> is not a list with at least 5 elements.
  * - Out of memory.
  *
  * @param  procedure  Procedure that refers to this function.

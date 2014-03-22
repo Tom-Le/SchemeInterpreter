@@ -18,6 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementations of Scheme procedure "define".
+ *
  * Associate an identifier with a Scheme element in current namespace.
  *
  * Will return NULL if:
@@ -28,8 +29,8 @@ static int _proc_initd = 0;
  * @param  element    A Scheme element.
  * @param  namespace  Active namespace.
  *
- * @return Element recently associated with an identifier
- *         or NULL if an error occurs.
+ * @return Element recently associated with an identifier or NULL if
+ *         an error occurs.
  */
 static scheme_element *_define_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 

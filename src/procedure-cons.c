@@ -18,6 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "cons".
+ *
  * Return a Scheme pair with first and second elements set to the given
  * arguments.
  *
@@ -45,37 +46,37 @@ static void _procedure_free(scheme_element *element) {}
 
 static scheme_element *_cons_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
+    scheme_pair *evaluatedList = scheme_list_evaluated((scheme_pair *)element, namespace);
+    if (evaluatedList == NULL)
+    {
+        return NULL;
+    }
+
     // Get arguments.
     int argCount;
-    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)evaluatedList, &argCount);
 
     // Check if argument list is invalid.
-    if (argCount == -1) return NULL;
+    if (argCount == -1)
+    {
+        scheme_element_free((scheme_element *)evaluatedList);
+        return NULL;
+    }
     else if (argCount != 2)
     {
         // Wrong number of arguments.
         if (args != NULL) free(args);
+        scheme_element_free((scheme_element *)evaluatedList);
         return NULL;
     }
 
-    scheme_element *firstArg = *args;
-    scheme_element *secondArg = *(args+1);
+    scheme_element *firstArg = args[0];
+    scheme_element *secondArg = args[1];
     free(args);
-
-    // Evaluate first and second arguments.
-    firstArg = scheme_evaluate(firstArg, namespace);
-    secondArg = scheme_evaluate(secondArg, namespace);
-    if (firstArg == NULL || secondArg == NULL)
-    {
-        scheme_element_free(firstArg);
-        scheme_element_free(secondArg);
-        return NULL;
-    }
 
     scheme_pair *pair = scheme_pair_new(firstArg, secondArg);
 
-    scheme_element_free(firstArg);
-    scheme_element_free(secondArg);
+    scheme_element_free((scheme_element *)evaluatedList);
     return (scheme_element *)pair;
 }
 

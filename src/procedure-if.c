@@ -79,13 +79,6 @@ static scheme_element *_if_function(scheme_procedure *procedure, scheme_element 
     scheme_element *elseExpr = args[2];
     free(args);
 
-    // Make sure we were able to evaluate all three arguments.
-    if (condition == NULL || thenExpr == NULL || elseExpr == NULL)
-    {
-        scheme_element_free((scheme_element *)evaluatedList);
-        return NULL;
-    }
-
     // Determine result based on condition.
     scheme_element *result;
     if (scheme_element_compare(condition, (scheme_element *)scheme_boolean_get_false()))

@@ -17,12 +17,13 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "assoc".
+ *
  * Find a pair among a list of pairs that is associated with a given element,
  * or #f if the given element does not associate with any pair in the list.
  *
  * Will return NULL if:
  * - Supplied element is not a list in the format: (<element> <list>).
- * - An element in the list is not in the format (<element> <element>).
+ * - An element in <list> is not in the format (<element> ...).
  * - Out of memory.
  *
  * @param  procedure  Procedure that refers to this function.

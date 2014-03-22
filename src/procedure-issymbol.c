@@ -10,7 +10,7 @@
 
 /**** Private variables ****/
 
-static scheme_procedure _procedure_symbol;
+static scheme_procedure _procedure_issymbol;
 static struct scheme_element_vtable _procedure_vtable;
 static int _proc_initd = 0;
 
@@ -18,6 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "symbol?".
+ *
  * Check if given argument is a symbol.
  *
  * Will return NULL if:
@@ -31,7 +32,7 @@ static int _proc_initd = 0;
  * @return Scheme boolean #t if argument is a symbol, #f if not,
  *         or NULL if an error occurred.
  */
-static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
+static scheme_element *_issymbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace);
 
 /**
  * Prevent freeing this statically allocated Scheme procedure.
@@ -43,7 +44,7 @@ static void _procedure_free(scheme_element *element) {}
 
 /**** Private function implementations ****/
 
-static scheme_element *_symbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
+static scheme_element *_issymbol_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
     // Get arguments.
     int argCount;
@@ -86,14 +87,14 @@ scheme_procedure *scheme_procedure_issymbol()
 {
     if (!_proc_initd)
     {
-        scheme_procedure_init(&_procedure_symbol, PROCEDURE_ISSYMBOL_NAME, _symbol_function);
+        scheme_procedure_init(&_procedure_issymbol, PROCEDURE_ISSYMBOL_NAME, _issymbol_function);
 
-        scheme_element_vtable_clone(&_procedure_vtable, _procedure_symbol.super.vtable);
+        scheme_element_vtable_clone(&_procedure_vtable, _procedure_issymbol.super.vtable);
         _procedure_vtable.free = _procedure_free;
-        _procedure_symbol.super.vtable = &_procedure_vtable;
+        _procedure_issymbol.super.vtable = &_procedure_vtable;
 
         _proc_initd = 1;
     }
 
-    return &_procedure_symbol;
+    return &_procedure_issymbol;
 }

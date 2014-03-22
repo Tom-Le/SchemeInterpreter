@@ -18,6 +18,7 @@ static int _proc_initd = 0;
 
 /**
  * Implementation of Scheme procedure "null?".
+ *
  * Check if a Scheme element is the empty pair or #f.
  *
  * Will return NULL if:
@@ -58,7 +59,7 @@ static scheme_element *_null_function(scheme_procedure *procedure, scheme_elemen
         return NULL;
     }
 
-    scheme_element *arg = *args;
+    scheme_element *arg = args[0];
     free(args);
 
     // Evaluate argument.

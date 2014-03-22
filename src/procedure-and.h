@@ -3,9 +3,9 @@
  *
  * Evaluate arguments sequentially and return #f as soon as an
  * argument evaluates to #f. If no argument evaluates to #f,
- * return the last argument.
+ * return the result of evaluating the last argument.
  *
- * If there is no arguments, return #t.
+ * If there is no argument, return #t.
  */
 
 #ifndef __SCHEME_PROCEDURE_AND_H__
