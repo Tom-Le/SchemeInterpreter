@@ -21,8 +21,8 @@ static int _proc_initd = 0;
  * Will return NULL if:
  * - Supplied element is not a list in the format:
  *       ((<arguments> ... [. <rest argument>]) <expression> ...)
-     or:
-         (<rest argument> <expression> ...)
+ *   or:
+ *       (<rest argument> <expression> ...)
  * - Out of memory.
  *
  * @param  procedure  Procedure that refers to this function.
@@ -45,6 +45,8 @@ static scheme_element *_lambda_function(scheme_procedure *procedure, scheme_elem
 {
     // Element must be a non-empty pair.
     if (!scheme_element_is_type(element, scheme_pair_get_type()))
+        return NULL;
+    if (scheme_pair_is_empty((scheme_pair *)element))
         return NULL;
 
     // Get list of arguments.
