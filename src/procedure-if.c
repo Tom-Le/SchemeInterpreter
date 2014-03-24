@@ -50,27 +50,15 @@ static void _procedure_free(scheme_element *element) {}
 
 static scheme_element *_if_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
-    // Evaluate each argument.
-    scheme_pair *evaluatedList = scheme_list_evaluated((scheme_pair *)element, namespace);
-    if (evaluatedList == NULL)
-    {
-        return NULL;
-    }
-
     // Get arguments.
     int argCount;
-    scheme_element **args = scheme_list_to_array(evaluatedList, &argCount);
+    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
 
     // Check if argument list is valid and that we are given exactly 3 arguments.
-    if (argCount == -1)
-    {
-        scheme_element_free((scheme_element *)evaluatedList);
-        return NULL;
-    }
+    if (argCount == -1) return NULL;
     else if (argCount != 3)
     {
-        free(args);
-        scheme_element_free((scheme_element *)evaluatedList);
+        if (args != NULL) free(args);
         return NULL;
     }
 
@@ -79,19 +67,26 @@ static scheme_element *_if_function(scheme_procedure *procedure, scheme_element 
     scheme_element *elseExpr = args[2];
     free(args);
 
-    // Determine result based on condition.
-    scheme_element *result;
-    if (scheme_element_compare(condition, (scheme_element *)scheme_boolean_get_false()))
+    // Evaluate condition.
+    condition = scheme_evaluate(condition, namespace);
+
+    // Make sure we were able to evaluate all three of them.
+    if (condition == NULL)
     {
-        result = scheme_element_copy(elseExpr);
+        return NULL;
+    }
+
+    int conditionIsFalse = scheme_element_compare(condition, (scheme_element *)scheme_boolean_get_false());
+    scheme_element_free(condition);
+
+    if (conditionIsFalse)
+    {
+        return scheme_evaluate(elseExpr, namespace);
     }
     else
     {
-        result = scheme_element_copy(thenExpr);
+        return scheme_evaluate(thenExpr, namespace);
     }
-
-    scheme_element_free((scheme_element *)evaluatedList);
-    return result;
 }
 
 /**** Public function implementation ****/
