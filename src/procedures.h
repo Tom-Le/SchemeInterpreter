@@ -39,5 +39,6 @@
 #include "procedure-last.h"
 #include "procedure-length.h"
 #include "procedure-exit.h"
+#include "procedure-let.h"
 
 #endif

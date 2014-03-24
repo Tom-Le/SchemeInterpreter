@@ -305,6 +305,7 @@ scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, caddddr);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, last);
     SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, length);
+    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, let);
 
     // Alternative namings for built-in procedures.
     SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(namespace, isnull, "not");
