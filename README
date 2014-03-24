@@ -17,6 +17,7 @@ Basic operations:
     quote
     define
     lambda
+    let
     exit
 
 Scheme pair and list operations:
