@@ -83,11 +83,11 @@ static scheme_element *_less_function(scheme_procedure *procedure, scheme_elemen
     }
 
     // Check if numbers are in strictly decreasing order.
-    int max = scheme_number_get_value((scheme_number *)arguments[0]);
+    long max = scheme_number_get_value((scheme_number *)arguments[0]);
     scheme_boolean *result = scheme_boolean_get_true();
     for (int i = 1; i < argCount; ++i)
     {
-        int value = scheme_number_get_value((scheme_number *)arguments[i]);
+        long value = scheme_number_get_value((scheme_number *)arguments[i]);
         if (value < max)
         {
             max = value;

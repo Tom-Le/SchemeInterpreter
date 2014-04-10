@@ -82,7 +82,7 @@ static scheme_element *_multiply_function(scheme_procedure *procedure, scheme_el
     }
 
     // Compute multiplication of all numbers.
-    int multiply = 1;
+    long multiply = 1;
     for (int i = 0; i < argCount; ++i)
     {
         multiply *= scheme_number_get_value((scheme_number *)arguments[i]);

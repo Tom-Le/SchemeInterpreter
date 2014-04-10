@@ -76,7 +76,7 @@ static scheme_element *_subtract_function(scheme_procedure *procedure, scheme_el
         }
     }
 
-    int result;
+    long result;
     if (argCount == 1)
     {
         // If there is only one argument, negate it.

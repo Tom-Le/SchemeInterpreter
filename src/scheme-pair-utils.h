@@ -38,8 +38,8 @@ int scheme_pair_is_list(scheme_pair *list);
 scheme_element **scheme_list_to_array(scheme_pair *list, int *count);
 
 /**
- * From a Scheme list, create another Scheme list with every first
- * element evaluated.
+ * From a Scheme list, create another Scheme list with every element
+ * evaluated.
  *
  * @param  list       A Scheme list.
  * @param  namespace  Active namespace.

@@ -69,7 +69,7 @@ static scheme_element *_exit_function(scheme_procedure *procedure, scheme_elemen
         // If evaluated result is a number, set the number as exit code.
         if (scheme_element_is_type(result, scheme_number_get_type()))
         {
-            g_SchemeProgramTerminationCode = scheme_number_get_value((scheme_number *)result);
+            g_SchemeProgramTerminationCode = scheme_number_get_value((scheme_number *)result) % 256;
         }
     }
 

@@ -81,7 +81,7 @@ static scheme_element *_add_function(scheme_procedure *procedure, scheme_element
     }
 
     // Compute sum of all numbers.
-    int sum = 0;
+    long sum = 0;
     for (int i = 0; i < argCount; ++i)
     {
         sum += scheme_number_get_value((scheme_number *)arguments[i]);

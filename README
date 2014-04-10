@@ -95,3 +95,7 @@ There are 9 Scheme data types:
      base namespace containing built-in procedures before parsing expressions from standard input.
 
 Each procedure listed above is implemented in `procedure-[name].h` and `procedure-[name].c`. They are listed in `procedures.h`.
+
+Most expressions in Scheme are in the form of `(<procedure> <argument> ...)`. The evaluator will pass `(<argument> ...)` to the specified
+procedure's C function. More accurately, these expressions are in the form of `(<procedure> . <element>)`, and the evaluator passes
+`<element>` to the specified procedure's C function.

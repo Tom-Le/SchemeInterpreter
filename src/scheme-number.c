@@ -7,7 +7,7 @@
 // Scheme number symbol.
 struct scheme_number {
     struct scheme_element super;
-    int value;
+    long value;
 };
 
 /**** Private function declarations ****/
@@ -74,7 +74,7 @@ static void _vtable_free(scheme_element *element)
 static void _vtable_print(scheme_element *element)
 {
     scheme_number *symbol = (scheme_number *)element;
-    printf("%d", symbol->value);
+    printf("%ld", symbol->value);
 }
 
 static scheme_element *_vtable_copy(scheme_element *element)
@@ -92,7 +92,7 @@ static int _vtable_compare(scheme_element *element, scheme_element *other)
 
 /**** Public function implementations ****/
 
-scheme_number *scheme_number_new(int value)
+scheme_number *scheme_number_new(long value)
 {
     // Allocate symbol.
     scheme_number *symbol;
@@ -107,7 +107,7 @@ scheme_number *scheme_number_new(int value)
     return symbol;
 }
 
-int scheme_number_get_value(scheme_number *symbol)
+long scheme_number_get_value(scheme_number *symbol)
 {
     return symbol->value;
 }

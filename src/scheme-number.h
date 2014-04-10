@@ -23,14 +23,14 @@ typedef struct scheme_number scheme_number;
  *
  * @return Newly created symbol, or NULL if out of memory.
  */
-scheme_number *scheme_number_new(int value);
+scheme_number *scheme_number_new(long value);
 
 /**
  * Get number symbol's value.
  *
  * @param  symbol  A number symbol.
  */
-int scheme_number_get_value(scheme_number *symbol);
+long scheme_number_get_value(scheme_number *symbol);
 
 /**
  * Get number symbol's type.
