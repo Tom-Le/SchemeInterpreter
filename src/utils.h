@@ -2,8 +2,8 @@
  * Utility functions for Scheme pairs.
  */
 
-#ifndef __SCHEME_PAIR_UTILS_H__
-#define __SCHEME_PAIR_UTILS_H__
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 #include "scheme-data-types.h"
 
@@ -48,5 +48,19 @@ scheme_element **scheme_list_to_array(scheme_pair *list, int *count);
  *         out of memory.
  */
 scheme_pair *scheme_list_evaluated(scheme_pair *list, scheme_namespace *namespace);
+
+/**
+ * Quote a Scheme element.
+ *
+ * Put the element into a pair in the form of: (quote <element>).
+ * The returned pointer must be freed with scheme_element_free().
+ *
+ * The given element is retained as a copy.
+ *
+ * @param  element  Scheme element to be quoted.
+ *
+ * @return As described, or NULL if element is NULL.
+ */
+scheme_pair *scheme_element_quote(scheme_element *element);
 
 #endif

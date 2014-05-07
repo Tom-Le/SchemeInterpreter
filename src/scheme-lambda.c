@@ -4,7 +4,7 @@
 
 #include "eval.h"
 #include "scheme-lambda.h"
-#include "scheme-pair-utils.h"
+#include "utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 

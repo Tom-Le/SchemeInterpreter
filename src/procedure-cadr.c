@@ -1,8 +1,12 @@
 #include <stdlib.h>
 
 #include "eval.h"
+#include "utils.h"
+
+#include "procedure-cdr.h"
+#include "procedure-car.h"
+
 #include "scheme-data-types.h"
-#include "scheme-pair-utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 
@@ -42,53 +46,31 @@ static void _procedure_free(scheme_element *element) {}
 
 static scheme_element *_cadr_function(scheme_procedure *procedure, scheme_element *element, scheme_namespace *namespace)
 {
-    // Get arguments.
-    int argCount;
-    scheme_element **args = scheme_list_to_array((scheme_pair *)element, &argCount);
+    scheme_element *result, *parameter, *temp;
 
-    // Check if argument list is invalid.
-    if (argCount == -1) return NULL;
-    else if (argCount != 1)
+    // Call cdr on given pair.
+    parameter = element;
+    result = scheme_procedure_apply(scheme_procedure_cdr(), parameter, namespace);
+    if (result == NULL)
     {
-        // Wrong number of arguments.
-        if (args != NULL) free(args);
         return NULL;
     }
 
-    scheme_element *arg = *args;
-    free(args);
-
-    // Evaluate argument.
-    scheme_element *result = scheme_evaluate(arg, namespace);
-    if (result == NULL) return NULL;
-
-    // Evaluated result must be a pair.
-    if (!scheme_element_is_type(result, scheme_pair_get_type()))
-    {
-        scheme_element_free(result);
-        return NULL;
-    }
-
-    // Traverse down one level of resulting pair.
-    scheme_element *second = result;
-    for (int i = 0; i < 1; ++i)
-    {
-        second = scheme_pair_get_second((scheme_pair *)second);
-
-        if (!scheme_element_is_type(second, scheme_pair_get_type()))
-        {
-            scheme_element_free(result);
-            return NULL;
-        }
-    }
-
-    // Get first element.
-    scheme_element *first = scheme_pair_get_first((scheme_pair *)second);
-    first = scheme_element_copy(first);
-
+    // Call car on resulting pair.
+    // Quote result of cdr.
+    parameter = (scheme_element *)scheme_element_quote(result);
     scheme_element_free(result);
 
-    return first;
+    // Put quoted result in a list of 1 element.
+    temp = (scheme_element *)scheme_pair_new(parameter, (scheme_element *)scheme_pair_get_empty());
+    scheme_element_free(parameter);
+    parameter = temp;
+
+    // Perform car call.
+    result = scheme_procedure_apply(scheme_procedure_car(), parameter, namespace);
+    scheme_element_free(parameter);
+
+    return result;
 }
 
 /**** Public function implementations ****/

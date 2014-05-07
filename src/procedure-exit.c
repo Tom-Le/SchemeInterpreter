@@ -3,7 +3,7 @@
 #include "main.h"
 #include "eval.h"
 #include "scheme-data-types.h"
-#include "scheme-pair-utils.h"
+#include "utils.h"
 #include "scheme-procedure-init.h"
 #include "scheme-element-private.h"
 

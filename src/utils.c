@@ -1,7 +1,8 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "scheme-pair-utils.h"
+#include "procedures.h"
+#include "utils.h"
 
 int scheme_pair_is_list(scheme_pair *list)
 {
@@ -114,4 +115,20 @@ scheme_pair *scheme_list_evaluated(scheme_pair *list, scheme_namespace *namespac
     scheme_element_free(evaluatedSecond);
 
     return result;
+}
+
+scheme_pair *scheme_element_quote(scheme_element *element)
+{
+    if (element == NULL)
+    {
+        return NULL;
+    }
+
+    scheme_pair *listedElement = scheme_pair_new(element, (scheme_element *)scheme_pair_get_empty());
+    scheme_pair *quotedElement = scheme_pair_new((scheme_element *)scheme_procedure_quote(),
+                                                 (scheme_element *)listedElement);
+
+    scheme_element_free((scheme_element *)listedElement);
+
+    return quotedElement;
 }

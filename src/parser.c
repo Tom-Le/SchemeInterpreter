@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "procedures.h"
 #include "parser.h"
 
 /**** Private function declarations ****/
@@ -63,12 +64,11 @@ static scheme_element *_scheme_expression(scheme_file *file, char *token, scheme
         free(nextToken);
 
         // Construct (quote <element>) list.
-        scheme_symbol *quoteSymbol = scheme_symbol_new("quote");
+        scheme_procedure *quoteProcedure = scheme_procedure_quote();
         scheme_pair *quotedList = scheme_pair_new(element, (scheme_element *)scheme_pair_get_empty());
-        scheme_pair *quoteElem = scheme_pair_new((scheme_element *)quoteSymbol, (scheme_element *)quotedList);
+        scheme_pair *quoteElem = scheme_pair_new((scheme_element *)quoteProcedure, (scheme_element *)quotedList);
 
         scheme_element_free(element);
-        scheme_element_free((scheme_element *)quoteSymbol);
         scheme_element_free((scheme_element *)quotedList);
         return (scheme_element *)quoteElem;
     }
