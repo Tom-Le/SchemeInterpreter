@@ -72,20 +72,21 @@ Notes on program structure
 There are 4 main modules:
 
    - The main program in `main.h` and `main.c`.  The lexical analyzer in `lexer.h` and `lexer.c`.
-   - The Scheme expression parser in `parser.h` and `parser.c`.  The Scheme expression evaluator in
-   - `eval.h` and `eval.c`.
+   - The Scheme expression parser in `parser.h` and `parser.c`.
+   - The Scheme expression evaluator in `eval.h` and `eval.c`.
 
 There are 5 fundamental Scheme data types:
 
    - Scheme element: An abstract type, represents any Scheme element. Implemented in
-   - `scheme-element.h`, `scheme-element-private.h`, and
-     `scheme-element.c`.
-   - Number: Represents an integer. Implemented in `scheme-number.h` and `scheme-number.c`.  Boolean
-   - symbol: Represents a boolean symbol (#t or #f). Implemented in `scheme-boolean.h` and
-   - `scheme-boolean.c`.  Symbol: Represents a generic string of characters. Implemented in
-   - `scheme-symbol.h` and `scheme-symbol.c`.  Pair: Represents a pair of two elements. Implemented
-   - in `scheme-pair.h` and `scheme-pair.c`. Note that a Scheme list is defined to be
-     either the empty pair or a pair whose second element is also a list.
+     `scheme-element.h`, `scheme-element-private.h`, and `scheme-element.c`.
+   - Number: Represents an integer. Implemented in `scheme-number.h` and `scheme-number.c`.
+   - Boolean symbol: Represents a boolean symbol (#t or #f). Implemented in `scheme-boolean.h` and
+     `scheme-boolean.c`.
+   - Symbol: Represents a generic string of characters. Implemented in `scheme-symbol.h` and
+     `scheme-symbol.c`.
+   - Pair: Represents a pair of two elements. Implemented in `scheme-pair.h` and `scheme-pair.c`.
+     Note that a Scheme list is defined to be either the empty pair or a pair whose second element
+     is also a list.
 
 In addition, there are 4 more Scheme data types:
 
