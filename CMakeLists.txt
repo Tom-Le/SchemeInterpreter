@@ -1,0 +1,18 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+
+PROJECT(SchemeInterpreter)
+
+ENABLE_TESTING()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/main/
+                    ${CMAKE_SOURCE_DIR}/src/modules/
+                    ${CMAKE_SOURCE_DIR}/src/procedures/
+                    ${CMAKE_SOURCE_DIR}/src/types/)
+
+ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/main/)
+ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/modules/)
+ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/procedures/)
+ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/types/)
