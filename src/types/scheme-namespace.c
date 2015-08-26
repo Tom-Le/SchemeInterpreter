@@ -4,7 +4,6 @@
 
 #include "scheme-namespace.h"
 #include "scheme-element-private.h"
-#include "procedures.h"
 
 #define SCHEME_NAMESPACE_INITIAL_SIZE 32
 
@@ -64,7 +63,7 @@ static int _vtable_compare(scheme_element *element, scheme_element *other);
  * @param  identifier  An identifier.
  * @param  elemnet     A Scheme element.
  */
-static void _namespace_item_init(struct _namespace_item *item, char *identifier, scheme_element *element);
+static void _namespace_item_init(struct _namespace_item *item, const char *identifier, scheme_element *element);
 
 /**
  * Free items in a namespace item.
@@ -184,7 +183,7 @@ static int _vtable_compare(scheme_element *element, scheme_element *other)
     return 1;
 }
 
-static void _namespace_item_init(struct _namespace_item *item, char *identifier, scheme_element *element)
+static void _namespace_item_init(struct _namespace_item *item, const char *identifier, scheme_element *element)
 {
     int idLength = strlen(identifier);
     if ((item->identifier = malloc(sizeof(char) * (idLength + 1))) == NULL)
@@ -244,77 +243,7 @@ scheme_namespace *scheme_namespace_new(scheme_namespace *superset)
     return namespace;
 }
 
-/**
- * Macro for adding a built-in Scheme procedure to a namespace.
- * Used in scheme_namespace_base_new().
- *
- * @param  NAMESPACE  A Scheme namespace.
- * @param  PROCNAME   Built-in procedure's name in all lowercase.
- */
-#define SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(NAMESPACE, PROCNAME) \
-    char *PROCNAME##Name = scheme_procedure_get_name(scheme_procedure_##PROCNAME()); \
-    scheme_namespace_set(NAMESPACE , PROCNAME##Name, (scheme_element *)scheme_procedure_##PROCNAME()); \
-    free(PROCNAME##Name);
-
-/**
- * Macro for adding a built-in procedure to a namespace under a different name.
- * Used in scheme_namespace_base_new().
- *
- * @param  NAMESPACE  A Scheme namespace.
- * @param  PROCNAME   Built-in procedure's name in all lowercase.
- * @param  ALTNAME    Alternative name.
- */
-#define SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(NAMESPACE, PROCNAME, ALTNAME) \
-    scheme_namespace_set(NAMESPACE, ALTNAME, (scheme_element *)scheme_procedure_##PROCNAME());
-
-scheme_namespace *scheme_namespace_base_new(scheme_namespace *superset)
-{
-    scheme_namespace *namespace = scheme_namespace_new(superset);
-
-    // Add built-in procedures.
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, exit);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, car);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, quote);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cdr);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, issymbol);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cons);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isequal);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isnull);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, append);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, assoc);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cond);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, if);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, define);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, lambda);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, islist);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isprocedure);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, add);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, subtract);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, multiply);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, and);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, or);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, greater);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, less);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, greaterequal);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, lessequal);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, isnumber);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, list);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cadr);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, caddr);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, cadddr);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, caddddr);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, last);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, length);
-    SCHEME_NAMESPACE_ADD_BUILTIN_PROCEDURE(namespace, let);
-
-    // Alternative namings for built-in procedures.
-    SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(namespace, isnull, "not");
-    SCHEME_NAMESPACE_ADD_ALTERNATIVE_PROCEDURE(namespace, isequal, "=");
-
-    return namespace;
-}
-
-scheme_element *scheme_namespace_get(scheme_namespace *namespace, char *identifier)
+scheme_element *scheme_namespace_get(scheme_namespace *namespace, const char *identifier)
 {
     // Search in namespace.
     int count = namespace->itemCount;
@@ -333,7 +262,7 @@ scheme_element *scheme_namespace_get(scheme_namespace *namespace, char *identifi
     return NULL;
 }
 
-void scheme_namespace_set(scheme_namespace *namespace, char *identifier, scheme_element *element)
+void scheme_namespace_set(scheme_namespace *namespace, const char *identifier, scheme_element *element)
 {
     // Search in namespace to see if identifier already exists.
     int count = namespace->itemCount;

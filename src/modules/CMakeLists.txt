@@ -1,1 +1,1 @@
-ADD_LIBRARY(scheme_modules eval.c lexer.c parser.c utils.c)
+ADD_LIBRARY(scheme_modules OBJECT eval.c lexer.c parser.c utils.c loader.c)

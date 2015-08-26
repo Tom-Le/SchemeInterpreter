@@ -1,4 +1,6 @@
-ADD_EXECUTABLE(scheme main.c)
-TARGET_LINK_LIBRARIES(scheme scheme_modules scheme_types scheme_procedures)
+ADD_EXECUTABLE(scheme main.c $<TARGET_OBJECTS:scheme_modules> $<TARGET_OBJECTS:scheme_types>)
+TARGET_LINK_LIBRARIES(scheme ${CMAKE_DL_LIBS})
+SET_TARGET_PROPERTIES(scheme PROPERTIES ENABLE_EXPORTS ON
+                                        POSITION_INDEPENDENT_CODE ON)
 
 INSTALL(TARGETS scheme DESTINATION bin/)

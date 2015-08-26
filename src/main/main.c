@@ -1,10 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config-info.h"
+
 #include "scheme-data-types.h"
 #include "parser.h"
 #include "eval.h"
+#include "loader.h"
 #include "main.h"
+
+#define SCHEME_PROCEDURES_FOLDER "/share/" SCHEME_PROGRAM_NAME "/procedures"
 
 int g_SchemeProgramTerminationFlag = 0;
 int g_SchemeProgramTerminationCode = 0;
@@ -17,14 +22,25 @@ int g_SchemeProgramTerminationCode = 0;
  */
 int main(int argc, char *argv[])
 {
-    printf("Experimental Scheme parser.\n");
-    printf("To exit, type \"(exit)\" or the EOF character.\n\n");
-
     // Parse expressions from stdin until terminated.
     scheme_file *f = scheme_open_file(stdin);
 
+    // Set up procedure loader.
+    scheme_loader *loader = scheme_loader_new();
+    const char *proceduresPath = SCHEME_INSTALL_PREFIX SCHEME_PROCEDURES_FOLDER;
+    int procedureCount = scheme_loader_load_folder(loader, proceduresPath);
+
+    if (procedureCount == 0)
+    {
+        fprintf(stderr, "WARNING: No built-in procedure found in path '%s'.\n", proceduresPath);
+    }
+
     // Set up base namespace.
-    scheme_namespace *baseNamespace = scheme_namespace_base_new(NULL);
+    scheme_namespace *baseNamespace = scheme_namespace_new(NULL);
+    scheme_loader_put_onto_namespace(loader, baseNamespace);
+
+    printf("Experimental Scheme parser.\n");
+    printf("To exit, type \"(exit)\" or the EOF character.\n\n");
 
     while (1)
     {
@@ -80,6 +96,7 @@ int main(int argc, char *argv[])
 
     // Terminate.
     scheme_element_free((scheme_element *)baseNamespace);
+    scheme_loader_free(loader);
     scheme_close(f);
     return g_SchemeProgramTerminationCode;
 }

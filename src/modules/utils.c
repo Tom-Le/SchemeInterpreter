@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "eval.h"
-#include "procedures.h"
 #include "utils.h"
 
 int scheme_pair_is_list(scheme_pair *list)
@@ -125,8 +124,8 @@ scheme_pair *scheme_element_quote(scheme_element *element)
     }
 
     scheme_pair *listedElement = scheme_pair_new(element, (scheme_element *)scheme_pair_get_empty());
-    scheme_pair *quotedElement = scheme_pair_new((scheme_element *)scheme_procedure_quote(),
-                                                 (scheme_element *)listedElement);
+    scheme_symbol *quoteSymbol = scheme_symbol_new("quote");
+    scheme_pair *quotedElement = scheme_pair_new((scheme_element *)quoteSymbol, (scheme_element *)listedElement);
 
     scheme_element_free((scheme_element *)listedElement);
 

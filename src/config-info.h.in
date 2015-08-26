@@ -1,0 +1,10 @@
+#ifndef __SCHEME_CONFIG_INFO_H__
+#define __SCHEME_CONFIG_INFO_H__
+
+// Install location.
+#define SCHEME_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+
+// Program name.
+#define SCHEME_PROGRAM_NAME "@CMAKE_PROJECT_NAME@-@PROJECT_VERSION@"
+
+#endif
